@@ -14136,6 +14136,20 @@ div.jp-OutputPrompt {
 </div></section></section><section><section>
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>What these lectures are:</p>
+<p><br></p>
+<ol>
+<li>These lectures are a condensation of my own personal experience and knowledge - developed over the last couple of years to perform a complicated new type of analysis that might not have been possible without JAX.</li>
+</ol>
+<p><br></p>
+<ol>
+<li>Over the course of time, the knowledge shared in these lectures helped me optimize a series of computations that took a week when I started to one that now takes 10 hours at most!</li>
+</ol>
+
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
 <p><br></p>
 
 </div>
@@ -14143,18 +14157,14 @@ div.jp-OutputPrompt {
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
 <p>What these lectures are not:</p>
-<ol>
-<li><p>These are by no means a comprehensive overview of JAX - they are meant to be sufficient enough for you to start implementing JAX in your own physics analysis.</p>
-</li>
-<li><p>While I will describe a bit how JAX works under the hood, it is just a high-level overview meant for you to understand how to implement JAX correctly in your own analysis so as to best optimize the computations.</p>
-</li>
-</ol>
-
-</div>
-</div></section></section><section><section>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
 <p><br></p>
+<ol>
+<li>These are by no means a comprehensive overview of JAX - they are meant to be sufficient enough for you to start implementing JAX in your own physics analysis.</li>
+</ol>
+<p><br></p>
+<ol>
+<li>While I will describe a bit how JAX works under the hood, it is only a high-level user-focused overview meant for you to understand how to implement JAX correctly and most efficently in your own analysis.</li>
+</ol>
 
 </div>
 </div>
@@ -14240,27 +14250,14 @@ $$\underset{\omega}{\operatorname{argmin}} \mathcal{L}(\omega)$$
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
 <p>How do we do this? A commonly used algorithm, called the gradient descent is a first-order iterative optimization algorithm for finding a local minimum of a differentiable function.</p>
 <p>The idea is to take repeated steps in the opposite direction of the gradient of the function at the current point, because this is the direction of steepest descent.</p>
-<div>
-<center>
-<img src="figures/func_min.png" width="500"/>
+$$\vec{\omega}_{i+1} = \vec{\omega}_{i} - \lambda \nabla_\omega \mathcal{L}(\vec{\omega}_i)$$<p><br></p>
+<p><div></p>
+<p><center>
+<img src="figures/func_min.png" width="300"/>
 </center>
-</div>$$\vec{\omega}_{i+1} = \vec{\omega}_{i} - \lambda \nabla_\omega \mathcal{L}(\vec{\omega}_i)$$
-</div>
-</div>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p><br></p>
-
-</div>
-</div>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p><br></p>
-
-</div>
-</div>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+&lt;/div&gt;
+<br>
+<br></p>
 <p>The figure is for a simple example with only one input parameter.</p>
 <p>The number of parameters in a typical NN can range from thousands to billions.</p>
 <p>Time efficient and accurate derivative estimation is thus a very important problem in computing.</p>
