@@ -8,9 +8,9 @@ The dataset for the fit can be found at: https://drive.google.com/file/d/1BLune0
 
 Note that the Jupyter notebooks for lectures are designed to be converted to slides - refer to the links below for the html slides:
 
-[Auto differentiation with JAX](https://hsf-india-may2023.github.io/JAX_in_HEP/Lecture_1_AutoDiff_JAX.slides.html)
+[Lecture 1: Auto differentiation with JAX](https://hsf-india-may2023.github.io/JAX_in_HEP/Lecture_1_AutoDiff_JAX.slides.html)
 
-[JIT tracing](https://hsf-india-may2023.github.io/JAX_in_HEP/Lecture_2_JIT_Tracing_Physics.slides.html)
+[Lecture 2: JIT tracing](https://hsf-india-may2023.github.io/JAX_in_HEP/Lecture_2_JIT_Tracing_Physics.slides.html)
 
 References:
 
