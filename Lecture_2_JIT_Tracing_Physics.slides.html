@@ -7,7 +7,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 
 
-<title>Lecture_1_AutoDiff_JAX slides</title><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
+<title>Lecture_2_JIT_Tracing_Physics slides</title><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
 
 <!-- General and theme style sheets -->
 <link rel="stylesheet" href="https://unpkg.com/reveal.js@4.0.2/dist/reveal.css">
@@ -14099,33 +14099,7 @@ div.jp-OutputPrompt {
 <div class="slides"><section><section>
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h1 id="Lesson-1:-Auto-Differentiation-and-JAX">Lesson 1: Auto-Differentiation and JAX<a class="anchor-link" href="#Lesson-1:-Auto-Differentiation-and-JAX">&#182;</a></h1>
-</div>
-</div>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p><br></p>
-
-</div>
-</div>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p><br></p>
-
-</div>
-</div></section></section><section><section>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p>Hi, I am Jay Sandesara.</p>
-<p>I will be giving a very gentle introduction to the use of auto-differentiation techniques using the JAX library.</p>
-<p>The lectures are focused for use of JAX in statistical data analysis at HEP experiments like the ATLAS and CMS.</p>
-<p><br>
-<br></p>
-<div>   
-    <center>
-        <img src="figures/JAX_in_HEP.png" width="500"/>
-    </center>
-    </div>
+<h1 id="Lecture-2:-JIT-compilation-and-Physics-Analysis">Lecture 2: JIT compilation and Physics Analysis<a class="anchor-link" href="#Lecture-2:-JIT-compilation-and-Physics-Analysis">&#182;</a></h1>
 </div>
 </div>
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
@@ -14136,826 +14110,8 @@ div.jp-OutputPrompt {
 </div></section></section><section><section>
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p><br></p>
-
-</div>
-</div></section></section><section><section>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p>What these lectures are not:</p>
-<ol>
-<li><p>These are by no means a comprehensive overview of JAX - they are meant to be sufficient enough for you to start implementing JAX in your own physics analysis.</p>
-</li>
-<li><p>While I will describe a bit how JAX works under the hood, it is just a high-level overview meant for you to understand how to implement JAX correctly in your own analysis so as to best optimize the computations.</p>
-</li>
-</ol>
-
-</div>
-</div></section></section><section><section>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p><br></p>
-
-</div>
-</div>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p><br></p>
-
-</div>
-</div></section></section><section><section>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p>Let's begin! Today we will cover the basics of auto-differentiation with and without JAX.</p>
-<p>I dont need to tell you that differentiation is used everywhere in physics! Everywhere from classical Newtonian and Lagrangian mechanics to the Schrodinger equations and the theories of relativity - we need to compute derivatives to do physics.</p>
-<p><br>
-<br></p>
-<div>   
-    <center>
-        <img src="figures/Theory_applications.png" width="550"/>
-    </center>
-    </div>
-</div>
-</div>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p><br></p>
-
-</div>
-</div>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p><br></p>
-
-</div>
-</div></section></section><section><section>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p>But that's not all!</p>
-<p>Differentiation is also very imporant for use in statistical tool-sets used to make physics inference in experimental high energy physics.</p>
-<p><br></p>
-<div>   
-<center>
-        <img src="figures/HEP_applications.png" width="1000"/>
-</center>
-</div><p><br></p>
-<p>This latter application will be the focus of this set of lectures.</p>
-
-</div>
-</div>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p><br></p>
-
-</div>
-</div>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p><br></p>
-
-</div>
-</div></section></section><section><section>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p>Let us start with the most popular statistical tool nowadays - Machine Learning.</p>
-<p>In ML, we typically use differentiation to perform gradient-based optimization of the ML model parameters $\omega$ for a given objective.</p>
-<p>Here the $\omega$ refer to the set of tune-able parameters in a ML model, such as the neurons in a Neural Network (NN).</p>
-<p>Our task is then to find the optimal set of parameter values $\omega$ that minimizes an appropriate loss (or objective) function:</p>
-$$\underset{\omega}{\operatorname{argmin}} \mathcal{L}(\omega)$$
-</div>
-</div>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p><br></p>
-
-</div>
-</div>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p><br></p>
-
-</div>
-</div></section></section><section><section>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p>How do we do this? A commonly used algorithm, called the gradient descent is a first-order iterative optimization algorithm for finding a local minimum of a differentiable function.</p>
-<p>The idea is to take repeated steps in the opposite direction of the gradient of the function at the current point, because this is the direction of steepest descent.</p>
-<div>
-<center>
-<img src="figures/func_min.png" width="500"/>
-</center>
-</div>$$\vec{\omega}_{i+1} = \vec{\omega}_{i} - \lambda \nabla_\omega \mathcal{L}(\vec{\omega}_i)$$
-</div>
-</div>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p><br></p>
-
-</div>
-</div>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p><br></p>
-
-</div>
-</div>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p>The figure is for a simple example with only one input parameter.</p>
-<p>The number of parameters in a typical NN can range from thousands to billions.</p>
-<p>Time efficient and accurate derivative estimation is thus a very important problem in computing.</p>
-
-</div>
-</div>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p><br></p>
-
-</div>
-</div>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p><br></p>
-
-</div>
-</div></section></section><section><section>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h2 id="How-do-we-calculate-the-derivatives-using-computers?">How do we calculate the derivatives using computers?<a class="anchor-link" href="#How-do-we-calculate-the-derivatives-using-computers?">&#182;</a></h2>
-</div>
-</div>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p><br></p>
-
-</div>
-</div></section></section><section><section>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p>Let's start with the human way of doing it. Let's say we have a function</p>
-$$f(x) = x^2+5$$<p>In Python this can be written as</p>
-
-</div>
-</div></section></section><section><section><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
-<div class="jp-Cell-inputWrapper">
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[1]:</div>
-<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-     <div class="CodeMirror cm-s-jupyter">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">f</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
-    
-    <span class="k">return</span> <span class="n">x</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="mi">5</span>
-</pre></div>
-
-     </div>
-</div>
-</div>
-</div>
-
-</div>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p><br></p>
-
-</div>
-</div>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p><br></p>
-
-</div>
-</div></section></section><section><section>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p>We want to calculate the derivative. We simply define another function, that is a derivative of this simple function:</p>
-
-</div>
-</div>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p><br></p>
-
-</div>
-</div>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p><br></p>
-
-</div>
-</div></section></section><section><section><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
-<div class="jp-Cell-inputWrapper">
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[2]:</div>
-<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-     <div class="CodeMirror cm-s-jupyter">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">f_prime</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
-    
-    <span class="k">return</span> <span class="mi">2</span><span class="o">*</span><span class="n">x</span>
-</pre></div>
-
-     </div>
-</div>
-</div>
-</div>
-
-</div>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p><br></p>
-
-</div>
-</div>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p><br></p>
-
-</div>
-</div></section></section><section><section>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p>This is easy, we now have a new Python function that gives us the derivative of $f(x)$ for any value of $x$!</p>
-<p>This way of calculating the derivatives using a computer is known as $\textbf{Manual Differentiation}$, for obvious reasons.</p>
-<p>While this type of approach is fairly intuitive, it can quickly become tedious for more complicated functions - common in statistics.</p>
-
-</div>
-</div>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p><br></p>
-
-</div>
-</div>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p><br></p>
-
-</div>
-</div></section></section><section><section>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p>Another way we can compute the derivatives is using $\textbf{Numerical Differentiation}$, which uses finite differences to compute the derivatives.</p>
-
-</div>
-</div>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p><br></p>
-
-</div>
-</div></section></section><section><section>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p>A derivative of a scalar valued function $f(x)$ for an n-dimensional vector $x$ is defined as follows:</p>
-$$\frac{\partial f}{\partial x} = \underset{h \rightarrow 0}{\operatorname{lim}} \frac{f(x+h)-f(x)}{h} $$
-</div>
-</div>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p><br></p>
-
-</div>
-</div></section></section><section><section>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p>We can update this definition so as to include very small, but non-zero values of h:</p>
-$$\frac{\partial f}{\partial x} \approx \frac{f(x+h)-f(x)}{h} $$
-</div>
-</div></section></section><section><section><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
-<div class="jp-Cell-inputWrapper">
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[16]:</div>
-<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-     <div class="CodeMirror cm-s-jupyter">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">f</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
-    
-    <span class="k">return</span> <span class="n">x</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="mi">5</span>
-
-<span class="k">def</span> <span class="nf">f_prime_man</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
-    
-    <span class="k">return</span> <span class="mi">2</span><span class="o">*</span><span class="n">x</span>
-
-<span class="k">def</span> <span class="nf">f_prime_num</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">h</span><span class="p">):</span>
-    
-    <span class="k">return</span> <span class="p">((</span><span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="o">+</span><span class="n">h</span><span class="p">))</span> <span class="o">-</span> <span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="p">))</span><span class="o">/</span><span class="n">h</span>
-</pre></div>
-
-     </div>
-</div>
-</div>
-</div>
-
-</div>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p><br></p>
-
-</div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
-<div class="jp-Cell-inputWrapper">
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[17]:</div>
-<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-     <div class="CodeMirror cm-s-jupyter">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">f_prime_num</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span><span class="mf">1e-5</span><span class="p">))</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">f_prime_man</span><span class="p">(</span><span class="mf">1.0</span><span class="p">))</span>
-</pre></div>
-
-     </div>
-</div>
-</div>
-</div>
-
-<div class="jp-Cell-outputWrapper">
-
-
-<div class="jp-OutputArea jp-Cell-outputArea">
-
-<div class="jp-OutputArea-child">
-
-    
-    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-
-
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
-<pre>2.00001000001393
-2.0
-</pre>
-</div>
-</div>
-
-</div>
-
-</div>
-
-</div>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p><br></p>
-
-</div>
-</div></section></section><section><section><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
-<div class="jp-Cell-inputWrapper">
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[24]:</div>
-<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-     <div class="CodeMirror cm-s-jupyter">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-
-<span class="c1"># Grid of step sizes</span>
-<span class="n">scan_h_values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">1e-12</span><span class="p">,</span><span class="mf">1e-4</span><span class="p">,</span><span class="n">num</span><span class="o">=</span><span class="mi">30</span><span class="p">)</span>
-
-<span class="c1"># Evaluate the function at 1.0</span>
-<span class="n">ones</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">scan_values</span><span class="p">)</span>
-
-<span class="c1"># Error = Manual Diff (Exact) - Numerical Diff (Approx)</span>
-<span class="n">error_estimates</span> <span class="o">=</span> <span class="n">f_prime_man</span><span class="p">(</span><span class="n">ones</span><span class="p">)</span> <span class="o">-</span> <span class="n">f_prime_num</span><span class="p">(</span><span class="n">ones</span><span class="p">,</span> <span class="n">scan_h_values</span><span class="p">)</span> 
-        
-<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">scan_h_values</span><span class="p">,</span> <span class="n">error_estimates</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="n">y</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">color</span> <span class="o">=</span> <span class="s1">&#39;g&#39;</span><span class="p">,</span> <span class="n">linestyle</span> <span class="o">=</span> <span class="s1">&#39;--&#39;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Errors&#39;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;step size&#39;</span><span class="p">)</span>
-</pre></div>
-
-     </div>
-</div>
-</div>
-</div>
-
-<div class="jp-Cell-outputWrapper">
-
-
-<div class="jp-OutputArea jp-Cell-outputArea">
-
-<div class="jp-OutputArea-child">
-
-    
-    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[24]:</div>
-
-
-
-
-<div class="jp-RenderedText jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/plain">
-<pre>Text(0.5, 0, &#39;step size&#39;)</pre>
-</div>
-
-</div>
-
-<div class="jp-OutputArea-child">
-
-    
-    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-
-
-
-
-<div class="jp-RenderedImage jp-OutputArea-output ">
-<img src="data:image/png;base64,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
-"
->
-</div>
-
-</div>
-
-</div>
-
-</div>
-
-</div>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p><br></p>
-
-</div>
-</div>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p><br></p>
-
-</div>
-</div></section></section><section><section>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p>An obvious limitation from this approach is the choice of the step size h.</p>
-<p>One needs to balance between the truncation error and the rounding error resulting from the limited precision of the function itself.</p>
-<p><br>
-<br></p>
-<p><div></p>
-<p><center>
-<img src="figures/Rounding_trunc_err.png" width="500"/>
-</center>
-&lt;/div&gt;
-<br>
-<br></p>
-<p>But as we saw, these errors can be made minimal for practical statistical purposes.</p>
-
-</div>
-</div>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p><br></p>
-
-</div>
-</div></section></section><section><section>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p>The main limitation of this approach comes from elsewhere. Generalizing the derivative for more than one parameter:</p>
-$$\frac{\partial f}{\partial x_i} \approx \frac{f(x_i+h e_i)-f(x_i)}{h} $$<p>We can see how such a derivative requires $n$ individual computations. For ML models, the number of tune-able parameters typically range from thousands to billions, making this method un-feasible in practice.</p>
-
-</div>
-</div>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p><br></p>
-
-</div>
-</div>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p><br></p>
-
-</div>
-</div></section></section><section><section>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p>$\textbf{Symbolic Differentiation}$ program can convert a function of our choice into it's respective derivative function, by transforming the function using the standard derivative tools.</p>
-<p>This is essentially an automated version of the Manual Differentiation technique.</p>
-<p><br></p>
-<div>
-<center>
-<img src="figures/Sym_Diff.png" width="500"/>
-</center>
-</div>
-</div>
-</div>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p><br></p>
-
-</div>
-</div></section></section><section><section>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p>This might seem like an optimal technique but it suffers from major flaws. One such limitation is known as Expression Swelling.</p>
-<p>What this means is that a function's derivative can turn into a very convoluted expression when written out explicitly.</p>
-
-</div>
-</div>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p><br></p>
-
-</div>
-</div></section></section><section><section>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p>Let's take an example of the soft ReLU function, commonly used as an activation function in NN models:</p>
-$$ \log \left(1.0 + e^{\vec{w}\cdot \vec{x} + \vec{b}} \right) $$<p>The derivative of this, w.r.t only two parameters is fairly involved:</p>
-$$ \frac{e^{b_1+b_2+ w_1 x + w_2 \log \left[ 1 + e^{b_1+w_1 x} \right] } w_2 x}{(1 + e^{b_1+w_1 x})\left(1 + e^{b_2+w_2 \log \left[1 + e^{b_1+w_1 x}\right]}\right)}$$<p>This is with just two parameters; with thousands of them (as is often typical in a hidden layer in an ML model) this quickly becomes so complex, it is impractical to calculate efficiently.</p>
-
-</div>
-</div>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p><br></p>
-
-</div>
-</div></section></section><section><section>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p>Moreover, the function passed to a symbolic differentiation program needs to be of a closed form - i.e. we cannot have loops or if/else conditions in the function.</p>
-<p>As we will see in the next lectures, control flow operations are particularly essential in the calculation of Hessian in an experimental analyses.</p>
-
-</div>
-</div>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p><br></p>
-
-</div>
-</div>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p><br></p>
-
-</div>
-</div></section></section><section><section>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p>It might seem hopeless than to compute these second derivatives with millions of parameters in a time practical way - and yet we keep seeing NNs with billions of tune-able parameters!</p>
-<p>Enter $\textbf{Automatic Differentiation}$. Rather than produce an expression for the derivative of a function, it calculates directly the exact numerical value of the function and it's derivatives for a given set of input parameters.</p>
-
-</div>
-</div>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p><br></p>
-
-</div>
-</div>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p><br></p>
-
-</div>
-</div></section></section><section><section>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p>To best understand automatic differentiation, it is easiest to start with a simple example. Let's say we want to find the value of the first-order derivative of the following function:</p>
-$$f(x_1, x_2) = \left(\frac{x_1}{x_2} - e^{x_2} \right) \cdot \left(sin\left(\frac{x_1}{x_2}\right) + \frac{x_1}{x_2} - e^{x_2}\right)$$<p>Seems a bit complex, especially if we try to perform manual or symbolic differentiation on this.</p>
-<p>But with some basic algebra, we can convert this function into a series of elementary computations.</p>
-
-</div>
-</div>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p><br></p>
-
-</div>
-</div>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p><br></p>
-
-</div>
-</div></section></section><section><section>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p>Let's write the function using Python:</p>
-
-</div>
-</div>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p><br></p>
-
-</div>
-</div></section></section><section><section><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
-<div class="jp-Cell-inputWrapper">
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[10]:</div>
-<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-     <div class="CodeMirror cm-s-jupyter">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Write the above function as a combination of it&#39;s elementary operations</span>
-
-<span class="k">def</span> <span class="nf">fn</span><span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="n">x2</span><span class="p">):</span>
-    
-    <span class="n">a</span> <span class="o">=</span> <span class="n">x1</span><span class="o">/</span><span class="n">x2</span>      
-    
-    <span class="n">b</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">x2</span><span class="p">)</span>     
-    
-    <span class="n">c</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
-    
-    <span class="n">d</span> <span class="o">=</span> <span class="n">a</span> <span class="o">-</span> <span class="n">b</span>
-    
-    <span class="n">e</span> <span class="o">=</span> <span class="n">c</span> <span class="o">+</span> <span class="n">d</span>
-    
-    <span class="n">g</span> <span class="o">=</span> <span class="n">d</span> <span class="o">*</span> <span class="n">e</span>
-    
-    <span class="k">return</span> <span class="n">g</span>
-</pre></div>
-
-     </div>
-</div>
-</div>
-</div>
-
-</div>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p><br></p>
-
-</div>
-</div>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p><br></p>
-
-</div>
-</div></section></section><section><section>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p>Do you see what we did here? Let's plot it out:</p>
-<div>
-<center>
-<img src="figures/forward_pass_nodiff.png" width="1000"/>
-    </center>
-</div><p>We start with the most basic operations involved in the function and then we use these computations to eventually compute the full function value.</p>
-<p>At each step, we use the computed values from the previous step, making the code more efficient.</p>
-
-</div>
-</div>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p><br></p>
-
-</div>
-</div>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p><br></p>
-
-</div>
-</div></section></section><section><section>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p>This might seem like a simple trick - but together with the chain rule of differentiation, this can be exploited to compute accurate and efficient derivatives of arbitrarily complex functions.</p>
-<p>Let's continue with the function above. Let's re-write it as follows:</p>
-
-</div>
-</div></section></section><section><section><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
-<div class="jp-Cell-inputWrapper">
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[28]:</div>
-<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-     <div class="CodeMirror cm-s-jupyter">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Write the derivative of the function using chain rule</span>
-
-<span class="k">def</span> <span class="nf">fn_prime</span><span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="n">x2</span><span class="p">):</span>
-    
-    <span class="n">a</span> <span class="o">=</span> <span class="n">x1</span><span class="o">/</span><span class="n">x2</span>      
-    
-    <span class="n">a_prime_x1</span> <span class="o">=</span> <span class="mi">1</span><span class="o">/</span><span class="n">x2</span>                         <span class="c1"># Explicitly compute derivative expressions wrt x1 parameter</span>
-    
-    <span class="n">b</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">x2</span><span class="p">)</span> 
-    
-    <span class="n">b_prime_x1</span> <span class="o">=</span> <span class="mi">0</span>
-    
-    <span class="n">c</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
-    
-    <span class="n">c_prime_x1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">a</span><span class="p">)</span><span class="o">*</span><span class="n">a_prime_x1</span>          <span class="c1"># Note how we start using the values of previous computations</span>
-
-    <span class="n">d</span> <span class="o">=</span> <span class="n">a</span> <span class="o">-</span> <span class="n">b</span>
-    
-    <span class="n">d_prime_x1</span> <span class="o">=</span> <span class="n">a_prime_x1</span> <span class="o">-</span> <span class="n">b_prime_x1</span>
-    
-    <span class="n">e</span> <span class="o">=</span> <span class="n">c</span> <span class="o">+</span> <span class="n">d</span>
-    
-    <span class="n">e_prime_x1</span> <span class="o">=</span> <span class="n">c_prime_x1</span> <span class="o">+</span> <span class="n">d_prime_x1</span> 
-     
-    <span class="n">f</span> <span class="o">=</span> <span class="n">d</span> <span class="o">*</span> <span class="n">e</span>
-    
-    <span class="n">h_prime_x1</span> <span class="o">=</span> <span class="n">d_prime_x1</span> <span class="o">*</span> <span class="n">e</span> 
-    
-    <span class="n">i_prime_x1</span> <span class="o">=</span> <span class="n">d</span> <span class="o">*</span> <span class="n">e_prime_x1</span>
-    
-    <span class="n">f_prime_x1</span> <span class="o">=</span> <span class="n">h_prime_x1</span> <span class="o">+</span> <span class="n">i_prime_x1</span>
-    
-    <span class="k">return</span> <span class="n">h_prime_x1</span>
-</pre></div>
-
-     </div>
-</div>
-</div>
-</div>
-
-</div>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p><br></p>
-
-</div>
-</div>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p><br></p>
-
-</div>
-</div></section></section><section><section>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p>An auto-differentiation algorithm is in essence doing something very similar! Let's plot it out again:</p>
-<p><br>
-<br></p>
-<p><div>
-    <center>
-<img src="figures/forward_pass_diff.png" width="1000"/>
-    </center>
-</div>
-<br>
-<br></p>
-<p>During a so-called forward pass, the auto-diff algorithm calculates and stores the values of each elementary operation and their respective derivatives just like in the function <code>fn_prime(x1, x2)</code> described in the last slide for example.</p>
-
-</div>
-</div>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p><br></p>
-
-</div>
-</div>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p><br></p>
-
-</div>
-</div></section></section><section><section>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p>One can then easily calculate the value of the derivative wrt <code>x1</code> or <code>x2</code> at the specified input value, just as in <code>fn_prime(x1, x2)</code> defined in the previous slide. (For derivative with <code>x2</code> we need to do another forward pass)</p>
-<p>This is referred to as the forward mode automatic differentiation to be specific, as opposed to reverse mode auto-differentiation, but we will get to this distinction in the exercises.</p>
-
-</div>
-</div>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p><br></p>
-
-</div>
-</div></section></section><section><section>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p>Note how we only compute the derivatives of a few basic expressions and then use the chain rule to compute the full derivative using these intermediate values.</p>
-
-</div>
-</div></section></section><section><section>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p>We no longer need a blown-up expression for a derivative that does repreated calculations of the same kind - we recycle the values we already calculated once.</p>
-<p>And we no longer need to worry about truncation errors - the computed derivatives are exact!</p>
-
-</div>
-</div></section></section><section><section>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p>We thus bypass the limitations of both Manual and Symbolic differentiations.</p>
-
-</div>
-</div></section></section><section><section>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p>These are some of the fundamentals of automatic differentiation, to help you get started.</p>
-<p>You will see more in today's exercise.</p>
-
-</div>
-</div>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p><br></p>
-
-</div>
-</div>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p><br></p>
-
-</div>
-</div></section></section><section><section>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h2 id="What-is-JAX?">What is JAX?<a class="anchor-link" href="#What-is-JAX?">&#182;</a></h2>
-</div>
-</div>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p><br></p>
-
-</div>
-</div></section></section><section><section>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p>JAX provides a simple and powerful numpy-like user API for writing accelerated numerical code, to perform array-based computing.</p>
-<p>It has the capability to perform something called Composable Function Transformations - transforming our Python and NumPy code to perform automatic differentiation, JIT compilation, parallelization on multi-core hardware, etc.</p>
+<p>We saw how JAX has a numpy-like user API for performing array-based computing.</p>
+<p>It has the capability to perform Composable Function Transformations on our Python/NumPy code and use it with the XLA compiler to perform super-fast computations on CPU, GPU or TPU</p>
 <p><br></p>
 $$\text{Python} \rightarrow \text{Intermediate Representation} \rightarrow \text{Transformations}$$<p><br></p>
 
@@ -14975,8 +14131,9 @@ $$\text{Python} \rightarrow \text{Intermediate Representation} \rightarrow \text
 </div></section></section><section><section>
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p>JAX is not just a tool for auto-differentiation. It also provides a range of tools for accelerated computation.</p>
-<p>It is built on top of the XLA (Accelerated Linear Algebra) compiler, which allows it to run fast on a variety of hardware platforms, including CPUs, GPUs, and TPUs.</p>
+<p>Examples of composable transformations include automatic differentiation, JIT compilation, parallelization on multi-core hardware (pmap), automatic vectorization (vmap) and automatic differentiation.</p>
+<p>We explored automatic differentiation in the last lecture.</p>
+<p>In this lecture, we will explore JIT compilation as well as find out a bit more about how JAX works under the hood with these intermediate representations and transformations.</p>
 
 </div>
 </div>
@@ -14994,9 +14151,19 @@ $$\text{Python} \rightarrow \text{Intermediate Representation} \rightarrow \text
 </div></section></section><section><section>
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p>One of the key features of JAX includes JIT compilation, which can speed up a piece of code by compiling it just-in-time.</p>
-<p>This can save a lot of time and effort, especially for repeated evaluations of complex functions with many parameters.</p>
-<p>We will be exploring more on the workings of JAX and of JIT compilation in the next two lectures.</p>
+<h3 id="JIT-Compilation">JIT Compilation<a class="anchor-link" href="#JIT-Compilation">&#182;</a></h3>
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p><br></p>
+
+</div>
+</div></section></section><section><section>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>JIT stands for Just-In-Time compilation, as opposed to AOT (Ahead-Of-Time) compilation.</p>
+<p>As the name suggests, compilation of the code happens $\textit{just in time}$ for computation.</p>
 
 </div>
 </div>
@@ -15014,7 +14181,22 @@ $$\text{Python} \rightarrow \text{Intermediate Representation} \rightarrow \text
 </div></section></section><section><section>
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p>For now, let's explore the automatic differentiation capabilities of JAX.</p>
+<p>During JIT compilation, JAX applies a series of optimizations on primitive <code>lax</code> operations to generate efficient XLA executable code on CPU, GPU or TPU.</p>
+<p><br>
+<br></p>
+<p><div></p>
+<p><center>
+<img src="figures/JAX_workflow.png" width="1000"/>
+    </center>
+&lt;/div&gt;
+<br>
+<br></p>
+
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p><br></p>
 
 </div>
 </div>
@@ -15026,49 +14208,9 @@ $$\text{Python} \rightarrow \text{Intermediate Representation} \rightarrow \text
 </div></section></section><section><section>
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p>We saw how forward auto-differntiation works in practice using the functions <code>fn</code> and <code>fn_prime</code>.</p>
-<p>Let us see how JAX handles this function and computes it's derivative.</p>
-<p>First let us start with the simpler example:</p>
-
-</div>
-</div>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>Once a function has been JIT-compiled, JAX caches the resulting XLA code so that it can be re-used in subsequent calls.</p>
 <p><br></p>
-
-</div>
-</div></section></section><section><section><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
-<div class="jp-Cell-inputWrapper">
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[25]:</div>
-<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-     <div class="CodeMirror cm-s-jupyter">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">jax</span>
-<span class="kn">from</span> <span class="nn">jax</span> <span class="kn">import</span> <span class="n">numpy</span> <span class="k">as</span> <span class="n">jnp</span>
-
-<span class="k">def</span> <span class="nf">f</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
-    
-    <span class="k">return</span> <span class="n">jnp</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span><span class="o">+</span><span class="mi">5</span>       <span class="c1">#Note how we replaced the regular numpy with JAX&#39;s numpy API</span>
-</pre></div>
-
-     </div>
-</div>
-</div>
-</div>
-
-</div>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p><br></p>
-
-</div>
-</div></section></section><section><section>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p>As mentioned before, JAX creates intermediate representation of our Python function before execution.</p>
-<p>It does so, using a fixed set of $\textit{primitive}$ operations handled by <code>jax.lax</code>, e.g. <code>lax.add</code>,<code>lax.sub</code>, etc.</p>
-<p>These are exactly the type of elementary operations we used to transform our Python function before!</p>
-<p>JAX knows how to perform composable transformations, like <code>grad</code>, <code>jit</code>, etc on these primitive operations.</p>
+<p><strong>This is where the power of JIT compilation comes in - after an initial compilation phase, the subsequent calls to the JIT-compiled function are super fast!</strong></p>
 
 </div>
 </div>
@@ -15080,12 +14222,248 @@ $$\text{Python} \rightarrow \text{Intermediate Representation} \rightarrow \text
 </div></section></section><section><section><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[14]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[76]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Let us check this out. make_jaxpr shows us the intermediate representation performed by JAX</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">jax</span>
+<span class="kn">from</span> <span class="nn">jax</span> <span class="kn">import</span> <span class="n">jit</span>
 
-<span class="n">jax</span><span class="o">.</span><span class="n">make_jaxpr</span><span class="p">(</span><span class="n">f</span><span class="p">)(</span><span class="mf">1.0</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">fn</span><span class="p">(</span><span class="n">tuple_arr</span><span class="p">):</span>
+    
+    <span class="k">return</span> <span class="n">jnp</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">tuple_arr</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">-</span> <span class="n">tuple_arr</span> <span class="o">**</span> <span class="mi">3</span> <span class="o">-</span> <span class="n">tuple_arr</span><span class="p">)</span>
+
+<span class="o">%</span><span class="k">timeit</span> -r1 -n1 fn(jnp.ones(100)).block_until_ready()
+
+<span class="n">fn_compiled</span> <span class="o">=</span> <span class="n">jit</span><span class="p">(</span><span class="n">fn</span><span class="p">)</span>
+<span class="o">%</span><span class="k">timeit</span> -r1 -n1 fn_compiled(jnp.ones(100)).block_until_ready()
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+<div class="jp-Cell-outputWrapper">
+
+
+<div class="jp-OutputArea jp-Cell-outputArea">
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
+<pre>1.47 ms ± 0 ns per loop (mean ± std. dev. of 1 run, 1 loop each)
+56.5 ms ± 0 ns per loop (mean ± std. dev. of 1 run, 1 loop each)
+</pre>
+</div>
+</div>
+
+</div>
+
+</div>
+
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p><br></p>
+
+</div>
+</div></section></section><section><section>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>As mentioned before, the power of JIT compilation only comes in when we have intend to repeat function calls many times.</p>
+<p>For example finding the minimum of a loss function by repeatedly calling the loss function and it's gradient:</p>
+<p><br></p>
+<p><div></p>
+<p><center>
+<img src="figures/func_min.png" width="300"/>
+</center>
+&lt;/div&gt;
+<br></p>
+<p>During the first computation, JAX performs the optimizations which takes some time, but the subsequent computations are super fast as we will see.</p>
+
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p><br></p>
+
+</div>
+</div></section></section><section><section><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[79]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Let&#39;s try again -  See how fast it performs now compared to the non-JITted function</span>
+
+<span class="o">%</span><span class="k">timeit</span> -r1 -n1 fn(jnp.ones(100)).block_until_ready()
+
+<span class="o">%</span><span class="k">timeit</span> -r1 -n1 fn_compiled(jnp.ones(100)).block_until_ready()
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+<div class="jp-Cell-outputWrapper">
+
+
+<div class="jp-OutputArea jp-Cell-outputArea">
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
+<pre>1.64 ms ± 0 ns per loop (mean ± std. dev. of 1 run, 1 loop each)
+490 µs ± 0 ns per loop (mean ± std. dev. of 1 run, 1 loop each)
+</pre>
+</div>
+</div>
+
+</div>
+
+</div>
+
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p><br></p>
+
+</div>
+</div></section></section><section><section><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[80]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Let&#39;s try again with a different sized array</span>
+
+<span class="o">%</span><span class="k">timeit</span> -r1 -n1 fn(jnp.ones(1000)).block_until_ready()
+
+<span class="o">%</span><span class="k">timeit</span> -r1 -n1 fn_compiled(jnp.ones(1000)).block_until_ready()
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+<div class="jp-Cell-outputWrapper">
+
+
+<div class="jp-OutputArea jp-Cell-outputArea">
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
+<pre>1.3 ms ± 0 ns per loop (mean ± std. dev. of 1 run, 1 loop each)
+42.9 ms ± 0 ns per loop (mean ± std. dev. of 1 run, 1 loop each)
+</pre>
+</div>
+</div>
+
+</div>
+
+</div>
+
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p><br></p>
+
+</div>
+</div></section></section><section><section><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[83]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Let&#39;s re-do the same computation with the same array as before </span>
+
+<span class="o">%</span><span class="k">timeit</span> -r1 -n1 fn(jnp.ones(1000)).block_until_ready()
+
+<span class="o">%</span><span class="k">timeit</span> -r1 -n1 fn_compiled(jnp.ones(1000)).block_until_ready() 
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+<div class="jp-Cell-outputWrapper">
+
+
+<div class="jp-OutputArea jp-Cell-outputArea">
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
+<pre>2.45 ms ± 0 ns per loop (mean ± std. dev. of 1 run, 1 loop each)
+560 µs ± 0 ns per loop (mean ± std. dev. of 1 run, 1 loop each)
+</pre>
+</div>
+</div>
+
+</div>
+
+</div>
+
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p><br></p>
+
+</div>
+</div></section></section><section><section>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>It seems as if JAX re-compiled our function when we changed the input.</p>
+<p>To better understand what's going on, let's find out how JAX performs under the hood.</p>
+
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p><br></p>
+
+</div>
+</div></section></section><section><section><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[2]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">jax</span>
+<span class="kn">from</span> <span class="nn">jax</span> <span class="kn">import</span> <span class="n">jit</span>
+<span class="kn">import</span> <span class="nn">jax.numpy</span> <span class="k">as</span> <span class="nn">jnp</span>
+
+<span class="c1"># Equivalent to doing jit(fn), we can optionally put a decorator that does the same thing</span>
+
+<span class="nd">@jit</span>
+<span class="k">def</span> <span class="nf">fn</span><span class="p">(</span><span class="n">tuple_arr</span><span class="p">):</span>
+    
+    <span class="nb">print</span><span class="p">(</span><span class="n">tuple_arr</span><span class="p">)</span>   <span class="c1"># Let&#39;s print out the input we passed to the function</span>
+    
+    <span class="k">return</span> <span class="n">jnp</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">tuple_arr</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">-</span> <span class="n">tuple_arr</span> <span class="o">**</span> <span class="mi">3</span> <span class="o">-</span> <span class="n">tuple_arr</span><span class="p">)</span>
+
+
+<span class="nb">print</span><span class="p">(</span><span class="n">fn</span><span class="p">(</span><span class="n">jnp</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="mi">100</span><span class="p">)))</span>
 </pre></div>
 
      </div>
@@ -15113,81 +14491,14 @@ $$\text{Python} \rightarrow \text{Intermediate Representation} \rightarrow \text
 <div class="jp-OutputArea-child">
 
     
-    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[14]:</div>
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 
 
-
-
-<div class="jp-RenderedText jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/plain">
-<pre>{ lambda ; a:f32[]. let
-    b:f32[] = integer_pow[y=2] a
-    c:f32[] = add b 5.0
-  in (c,) }</pre>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
+<pre>Traced&lt;ShapedArray(float32[100])&gt;with&lt;DynamicJaxprTrace(level=0/1)&gt;
+-100.0
+</pre>
 </div>
-
-</div>
-
-</div>
-
-</div>
-
-</div>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p><br></p>
-
-</div>
-</div></section></section><section><section><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
-<div class="jp-Cell-inputWrapper">
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[26]:</div>
-<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-     <div class="CodeMirror cm-s-jupyter">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Now let us check out how it performs the gradient under the hood after doing the intermediate representation</span>
-
-<span class="c1"># Does the output look familiar?</span>
-
-<span class="n">jax</span><span class="o">.</span><span class="n">make_jaxpr</span><span class="p">(</span><span class="n">jax</span><span class="o">.</span><span class="n">jacfwd</span><span class="p">(</span><span class="n">f</span><span class="p">))(</span><span class="mf">1.0</span><span class="p">)</span>
-</pre></div>
-
-     </div>
-</div>
-</div>
-</div>
-
-<div class="jp-Cell-outputWrapper">
-
-
-<div class="jp-OutputArea jp-Cell-outputArea">
-
-<div class="jp-OutputArea-child">
-
-    
-    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[26]:</div>
-
-
-
-
-<div class="jp-RenderedText jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/plain">
-<pre>{ lambda ; a:f32[]. let
-    b:i32[1,1] = iota[dimension=0 dtype=int32 shape=(1, 1)] 
-    c:i32[1,1] = add b 0
-    d:i32[1,1] = iota[dimension=1 dtype=int32 shape=(1, 1)] 
-    e:bool[1,1] = eq c d
-    f:f32[1,1] = convert_element_type[new_dtype=float32 weak_type=False] e
-    g:f32[1,1] = slice[limit_indices=(1, 1) start_indices=(0, 0) strides=None] f
-    h:f32[1] = reshape[dimensions=None new_sizes=(1,)] g
-    i:f32[1] = convert_element_type[new_dtype=float32 weak_type=True] h
-    j:f32[] = integer_pow[y=2] a
-    k:f32[] = integer_pow[y=1] a
-    l:f32[] = mul 2.0 k
-    m:f32[1] = mul i l
-    _:f32[] = add j 5.0
-    n:f32[1] = slice[limit_indices=(1,) start_indices=(0,) strides=None] m
-    o:f32[] = reshape[dimensions=None new_sizes=()] n
-  in (o,) }</pre>
-</div>
-
 </div>
 
 </div>
@@ -15203,8 +14514,9 @@ $$\text{Python} \rightarrow \text{Intermediate Representation} \rightarrow \text
 </div></section></section><section><section>
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p>Okay, that was fairly intuitive and just what we expected!</p>
-<p>Now let's do this again with the more complicated function that we computed by manually performing forward-mode differentiation earlier.</p>
+<p>JAX first converts our input to create an abstract object called <code>ShapedArray</code> that has a specific data type <code>float32</code> and size <code>100</code>.</p>
+<p>That is why, rather than printing the data we passed to the function, it prints this object that stands-in for the data.</p>
+<p>But this object has no specific value!</p>
 
 </div>
 </div>
@@ -15216,7 +14528,170 @@ $$\text{Python} \rightarrow \text{Intermediate Representation} \rightarrow \text
 </div></section></section><section><section><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[34]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[86]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">jax</span><span class="o">.</span><span class="n">make_jaxpr</span><span class="p">(</span><span class="n">fn</span><span class="p">)(</span><span class="n">jnp</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="mi">100</span><span class="p">)))</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+<div class="jp-Cell-outputWrapper">
+
+
+<div class="jp-OutputArea jp-Cell-outputArea">
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
+<pre>Traced&lt;ShapedArray(float32[100])&gt;with&lt;DynamicJaxprTrace(level=1/1)&gt;
+{ lambda ; a:f32[100]. let
+    b:f32[] = xla_call[
+      call_jaxpr={ lambda ; c:f32[100]. let
+          d:f32[100] = integer_pow[y=2] c
+          e:f32[100] = integer_pow[y=3] c
+          f:f32[100] = sub d e
+          g:f32[100] = sub f c
+          h:f32[] = reduce_sum[axes=(0,)] g
+        in (h,) }
+      name=fn
+    ] a
+  in (b,) }
+</pre>
+</div>
+</div>
+
+</div>
+
+</div>
+
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p><br></p>
+
+</div>
+</div></section></section><section><section>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>Then, it passes this <code>ShapedArray</code> object through the primitive <code>lax</code> operations to create a computation chart for function execution. This part of the process is known as $\textit{tracing}$.</p>
+<p>But note that the <code>ShapedArray</code> object has a specific size and type now <code>a:f32[100]</code> - but that is all it has.</p>
+
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p><br></p>
+
+</div>
+</div></section></section><section><section>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>Once JAX finishes creating the computation chart with <code>lax</code> operations, it then optimizes the code for the XLA compiler to run on any machine of choice.</p>
+<p>This HLO code resulting from the optimization step is cached - and can then be efficiently applied within XLA to new inputs with the same shape and dtype, without having to re-execute the Python code.</p>
+<p>Upon repeated executions the cached code is run on the machine with super-fast execution times!</p>
+<p><br>
+<br></p>
+<p>Note that the tracer object does have a fixed shape - so previously when we passed a new array with different shape, JAX had to re-compile the function with this new shape.</p>
+
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p><br></p>
+
+</div>
+</div></section></section><section><section>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>To see this in action, note how when we re-execute the function, the print statement is no longer executed.</p>
+<p>This is because, there is no additional tracing of the Python function - under the hood JAX is just using the cached computation chart it already optimized!</p>
+
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p><br></p>
+
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[4]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># It doesnt print anymore - uses the cached set of instructions</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">fn</span><span class="p">(</span><span class="n">jnp</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="mi">100</span><span class="p">)))</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+<div class="jp-Cell-outputWrapper">
+
+
+<div class="jp-OutputArea jp-Cell-outputArea">
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
+<pre>-100.0
+</pre>
+</div>
+</div>
+
+</div>
+
+</div>
+
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p><br></p>
+
+</div>
+</div></section></section><section><section>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<h4 id="Key-Summary-of-JIT-compilation">Key Summary of JIT compilation<a class="anchor-link" href="#Key-Summary-of-JIT-compilation">&#182;</a></h4>
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p><br></p>
+
+</div>
+</div></section></section><section><section>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>By default JAX executes operations one at a time, in sequence.</p>
+<p>We saw an example of this in the last lecture with our purpose-ly bad written function and how JAX converted it.</p>
+
+</div>
+</div></section></section><section><section>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p><br></p>
+
+</div>
+</div></section></section><section><section><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[1]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Let&#39;s see how JAX simplifies our expression with it&#39;s computation graph</span>
@@ -15241,7 +14716,7 @@ $$\text{Python} \rightarrow \text{Intermediate Representation} \rightarrow \text
 <div class="jp-OutputArea-child">
 
     
-    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[34]:</div>
+    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[1]:</div>
 
 
 
@@ -15276,9 +14751,8 @@ $$\text{Python} \rightarrow \text{Intermediate Representation} \rightarrow \text
 </div></section></section><section><section>
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p>The <code>div a b</code> seems to be repeated three times in the JAX computation.</p>
-<p>This is because, as of now, we do not compile it using JIT. So the computation chart follows the way $\textit{you}$ write the function.</p>
-<p>Once we do, JIT recognizes and de-duplicates the repeated operations where necessary. We shall explore this in the next lecture.</p>
+<p>Using a just-in-time (JIT) compilation decorator, sequences of operations can be optimized together and run at once.</p>
+<p>Let's see this in action!</p>
 
 </div>
 </div>
@@ -15290,17 +14764,439 @@ $$\text{Python} \rightarrow \text{Intermediate Representation} \rightarrow \text
 </div></section></section><section><section><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[3]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[2]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Let&#39;s manually re-write the function to avoid repeated computation for simplicity</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Here we perform an AOT compilation to show what goes on after compilation - yes JAX also supports AOT when necessary</span>
 
-<span class="k">def</span> <span class="nf">fnc_jax</span><span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="n">x2</span><span class="p">):</span>
-    <span class="n">a</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">divide</span><span class="p">(</span><span class="n">x1</span><span class="p">,</span><span class="n">x2</span><span class="p">)</span>
-    <span class="n">b</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">x2</span><span class="p">)</span>
-    <span class="k">return</span> <span class="p">(</span><span class="n">a</span> <span class="o">-</span> <span class="n">b</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">jnp</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="o">+</span> <span class="n">a</span> <span class="o">-</span> <span class="n">b</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">jax</span> <span class="kn">import</span> <span class="n">jit</span>
 
-<span class="n">jax</span><span class="o">.</span><span class="n">make_jaxpr</span><span class="p">(</span><span class="n">fnc_jax</span><span class="p">)(</span><span class="mf">1.0</span><span class="p">,</span><span class="mf">1.0</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">jax</span><span class="o">.</span><span class="n">__version__</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">jit</span><span class="p">(</span><span class="n">fnc_jax</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">(</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">)</span><span class="o">.</span><span class="n">compile</span><span class="p">()</span><span class="o">.</span><span class="n">as_text</span><span class="p">())</span>
+
+<span class="c1"># The output is an example of HLO that we discussed - we wont go into much detail about HLO language, </span>
+<span class="c1"># but as you may see, we no longer have repeated operations in the computation chart</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+<div class="jp-Cell-outputWrapper">
+
+
+<div class="jp-OutputArea jp-Cell-outputArea">
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr">
+<pre>No GPU/TPU found, falling back to CPU. (Set TF_CPP_MIN_LOG_LEVEL=0 and rerun for more info.)
+</pre>
+</div>
+</div>
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
+<pre>0.4.6
+HloModule jit_fnc_jax, entry_computation_layout={(f32[],f32[])-&gt;f32[]}, allow_spmd_sharding_propagation_to_output={true}
+
+%fused_computation (param_0.2: f32[], param_1.4: f32[]) -&gt; f32[] {
+  %param_0.2 = f32[] parameter(0)
+  %param_1.4 = f32[] parameter(1)
+  %exponential.0 = f32[] exponential(f32[] %param_1.4), metadata={op_name=&#34;jit(fnc_jax)/jit(main)/exp&#34; source_file=&#34;/tmp/ipykernel_42962/377062428.py&#34; source_line=8}
+  %subtract.1 = f32[] subtract(f32[] %param_0.2, f32[] %exponential.0), metadata={op_name=&#34;jit(fnc_jax)/jit(main)/sub&#34; source_file=&#34;/tmp/ipykernel_42962/377062428.py&#34; source_line=8}
+  %sine.0 = f32[] sine(f32[] %param_0.2), metadata={op_name=&#34;jit(fnc_jax)/jit(main)/sin&#34; source_file=&#34;/tmp/ipykernel_42962/377062428.py&#34; source_line=8}
+  %add.0 = f32[] add(f32[] %sine.0, f32[] %param_0.2), metadata={op_name=&#34;jit(fnc_jax)/jit(main)/add&#34; source_file=&#34;/tmp/ipykernel_42962/377062428.py&#34; source_line=8}
+  %subtract.0 = f32[] subtract(f32[] %add.0, f32[] %exponential.0), metadata={op_name=&#34;jit(fnc_jax)/jit(main)/sub&#34; source_file=&#34;/tmp/ipykernel_42962/377062428.py&#34; source_line=8}
+  ROOT %multiply.0 = f32[] multiply(f32[] %subtract.1, f32[] %subtract.0), metadata={op_name=&#34;jit(fnc_jax)/jit(main)/mul&#34; source_file=&#34;/tmp/ipykernel_42962/377062428.py&#34; source_line=8}
+}
+
+ENTRY %main.13 (Arg_0.1: f32[], Arg_1.2: f32[]) -&gt; f32[] {
+  %Arg_0.1 = f32[] parameter(0), sharding={replicated}
+  %Arg_1.2 = f32[] parameter(1), sharding={replicated}
+  %divide.3 = f32[] divide(f32[] %Arg_0.1, f32[] %Arg_1.2), metadata={op_name=&#34;jit(fnc_jax)/jit(main)/div&#34; source_file=&#34;/tmp/ipykernel_42962/377062428.py&#34; source_line=8}
+  ROOT %fusion = f32[] fusion(f32[] %divide.3, f32[] %Arg_1.2), kind=kLoop, calls=%fused_computation, metadata={op_name=&#34;jit(fnc_jax)/jit(main)/mul&#34; source_file=&#34;/tmp/ipykernel_42962/377062428.py&#34; source_line=8}
+}
+
+
+</pre>
+</div>
+</div>
+
+</div>
+
+</div>
+
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p><br></p>
+
+</div>
+</div></section></section><section><section>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>In principle, JIT performs a range of optimizations to make the code more efficient - we do not need the specifics, only that it works very well!</p>
+<p><br></p>
+<p>Not all JAX code can be JIT compiled, as it requires array shapes to be static &amp; known at compile time.</p>
+<p>As we saw before, JIT compilation traces a <code>ShapedArray</code> object with fixed shape and type - you cannot have a computation that requires it to change it's shape based on a specific value.</p>
+
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p><br></p>
+
+</div>
+</div></section></section><section><section><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[4]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="nd">@jit</span>
+<span class="k">def</span> <span class="nf">fn_bad</span><span class="p">(</span><span class="n">tuple_arr</span><span class="p">):</span>
+    
+    <span class="n">sum_arr</span> <span class="o">=</span> <span class="n">tuple_arr</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">-</span> <span class="n">tuple_arr</span> <span class="o">**</span> <span class="mi">3</span> <span class="o">-</span> <span class="n">tuple_arr</span>
+    
+    <span class="n">sum_arr</span> <span class="o">=</span> <span class="n">sum_arr</span><span class="p">[</span><span class="n">sum_arr</span><span class="o">&gt;=</span><span class="mf">0.0</span><span class="p">]</span>          <span class="c1"># This forces the traced function to take a specific value - not allowed!</span>
+    
+    <span class="k">return</span> <span class="n">jnp</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">sum_arr</span><span class="p">)</span>       
+
+
+<span class="c1"># We cannot have output with shapes not known explicitly at compile time</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">fn_bad</span><span class="p">(</span><span class="n">jnp</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="mi">100</span><span class="p">)))</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+<div class="jp-Cell-outputWrapper">
+
+
+<div class="jp-OutputArea jp-Cell-outputArea">
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr">
+<pre>
+<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg">NonConcreteBooleanIndexError</span>              Traceback (most recent call last)
+Cell <span class="ansi-green-fg">In[4], line 13</span>
+<span class="ansi-green-intense-fg ansi-bold">      8</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> jnp<span style="color: rgb(98,98,98)">.</span>sum(sum_arr)       
+<span class="ansi-green-intense-fg ansi-bold">     11</span> <span style="color: rgb(95,135,135)"># We cannot have output with shapes not known explicitly at compile time</span>
+<span class="ansi-green-fg">---&gt; 13</span> <span style="color: rgb(0,135,0)">print</span>(<span class="ansi-yellow-bg">fn_bad</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">jnp</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">ones</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">100</span><span class="ansi-yellow-bg">)</span><span class="ansi-yellow-bg">)</span>)
+
+    <span class="ansi-red-fg">[... skipping hidden 12 frame]</span>
+
+Cell <span class="ansi-green-fg">In[4], line 6</span>, in <span class="ansi-cyan-fg">fn_bad</span><span class="ansi-blue-fg">(tuple_arr)</span>
+<span class="ansi-green-intense-fg ansi-bold">      1</span> <span style="color: rgb(175,0,255)">@jit</span>
+<span class="ansi-green-intense-fg ansi-bold">      2</span> <span class="ansi-bold" style="color: rgb(0,135,0)">def</span> <span style="color: rgb(0,0,255)">fn_bad</span>(tuple_arr):
+<span class="ansi-green-intense-fg ansi-bold">      4</span>     sum_arr <span style="color: rgb(98,98,98)">=</span> tuple_arr <span style="color: rgb(98,98,98)">*</span><span style="color: rgb(98,98,98)">*</span> <span style="color: rgb(98,98,98)">2</span> <span style="color: rgb(98,98,98)">-</span> tuple_arr <span style="color: rgb(98,98,98)">*</span><span style="color: rgb(98,98,98)">*</span> <span style="color: rgb(98,98,98)">3</span> <span style="color: rgb(98,98,98)">-</span> tuple_arr
+<span class="ansi-green-fg">----&gt; 6</span>     sum_arr <span style="color: rgb(98,98,98)">=</span> <span class="ansi-yellow-bg">sum_arr</span><span class="ansi-yellow-bg">[</span><span class="ansi-yellow-bg">sum_arr</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">&gt;</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">0.0</span><span class="ansi-yellow-bg">]</span>          <span style="color: rgb(95,135,135)"># Remove negative values from array</span>
+<span class="ansi-green-intense-fg ansi-bold">      8</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> jnp<span style="color: rgb(98,98,98)">.</span>sum(sum_arr)
+
+    <span class="ansi-red-fg">[... skipping hidden 1 frame]</span>
+
+File <span class="ansi-green-fg">~/miniconda3/envs/py39/lib/python3.9/site-packages/jax/_src/numpy/lax_numpy.py:3942</span>, in <span class="ansi-cyan-fg">_rewriting_take</span><span class="ansi-blue-fg">(arr, idx, indices_are_sorted, unique_indices, mode, fill_value)</span>
+<span class="ansi-green-intense-fg ansi-bold">   3936</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> (<span style="color: rgb(0,135,0)">isinstance</span>(aval, core<span style="color: rgb(98,98,98)">.</span>DShapedArray) <span class="ansi-bold" style="color: rgb(175,0,255)">and</span> aval<span style="color: rgb(98,98,98)">.</span>shape <span style="color: rgb(98,98,98)">==</span> () <span class="ansi-bold" style="color: rgb(175,0,255)">and</span>
+<span class="ansi-green-intense-fg ansi-bold">   3937</span>         dtypes<span style="color: rgb(98,98,98)">.</span>issubdtype(aval<span style="color: rgb(98,98,98)">.</span>dtype, np<span style="color: rgb(98,98,98)">.</span>integer) <span class="ansi-bold" style="color: rgb(175,0,255)">and</span>
+<span class="ansi-green-intense-fg ansi-bold">   3938</span>         <span class="ansi-bold" style="color: rgb(175,0,255)">not</span> dtypes<span style="color: rgb(98,98,98)">.</span>issubdtype(aval<span style="color: rgb(98,98,98)">.</span>dtype, dtypes<span style="color: rgb(98,98,98)">.</span>bool_) <span class="ansi-bold" style="color: rgb(175,0,255)">and</span>
+<span class="ansi-green-intense-fg ansi-bold">   3939</span>         <span style="color: rgb(0,135,0)">isinstance</span>(arr<span style="color: rgb(98,98,98)">.</span>shape[<span style="color: rgb(98,98,98)">0</span>], <span style="color: rgb(0,135,0)">int</span>)):
+<span class="ansi-green-intense-fg ansi-bold">   3940</span>       <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> lax<span style="color: rgb(98,98,98)">.</span>dynamic_index_in_dim(arr, idx, keepdims<span style="color: rgb(98,98,98)">=</span><span class="ansi-bold" style="color: rgb(0,135,0)">False</span>)
+<span class="ansi-green-fg">-&gt; 3942</span> treedef, static_idx, dynamic_idx <span style="color: rgb(98,98,98)">=</span> <span class="ansi-yellow-bg">_split_index_for_jit</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">idx</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">arr</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">shape</span><span class="ansi-yellow-bg">)</span>
+<span class="ansi-green-intense-fg ansi-bold">   3943</span> <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> _gather(arr, treedef, static_idx, dynamic_idx, indices_are_sorted,
+<span class="ansi-green-intense-fg ansi-bold">   3944</span>                unique_indices, mode, fill_value)
+
+File <span class="ansi-green-fg">~/miniconda3/envs/py39/lib/python3.9/site-packages/jax/_src/numpy/lax_numpy.py:4021</span>, in <span class="ansi-cyan-fg">_split_index_for_jit</span><span class="ansi-blue-fg">(idx, shape)</span>
+<span class="ansi-green-intense-fg ansi-bold">   4017</span> idx <span style="color: rgb(98,98,98)">=</span> _eliminate_deprecated_list_indexing(idx)
+<span class="ansi-green-intense-fg ansi-bold">   4019</span> <span style="color: rgb(95,135,135)"># Expand any (concrete) boolean indices. We can then use advanced integer</span>
+<span class="ansi-green-intense-fg ansi-bold">   4020</span> <span style="color: rgb(95,135,135)"># indexing logic to handle them.</span>
+<span class="ansi-green-fg">-&gt; 4021</span> idx <span style="color: rgb(98,98,98)">=</span> <span class="ansi-yellow-bg">_expand_bool_indices</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">idx</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">shape</span><span class="ansi-yellow-bg">)</span>
+<span class="ansi-green-intense-fg ansi-bold">   4023</span> leaves, treedef <span style="color: rgb(98,98,98)">=</span> tree_flatten(idx)
+<span class="ansi-green-intense-fg ansi-bold">   4024</span> dynamic <span style="color: rgb(98,98,98)">=</span> [<span class="ansi-bold" style="color: rgb(0,135,0)">None</span>] <span style="color: rgb(98,98,98)">*</span> <span style="color: rgb(0,135,0)">len</span>(leaves)
+
+File <span class="ansi-green-fg">~/miniconda3/envs/py39/lib/python3.9/site-packages/jax/_src/numpy/lax_numpy.py:4334</span>, in <span class="ansi-cyan-fg">_expand_bool_indices</span><span class="ansi-blue-fg">(idx, shape)</span>
+<span class="ansi-green-intense-fg ansi-bold">   4330</span>   abstract_i <span style="color: rgb(98,98,98)">=</span> core<span style="color: rgb(98,98,98)">.</span>get_aval(i)
+<span class="ansi-green-intense-fg ansi-bold">   4332</span> <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> <span class="ansi-bold" style="color: rgb(175,0,255)">not</span> <span style="color: rgb(0,135,0)">type</span>(abstract_i) <span class="ansi-bold" style="color: rgb(175,0,255)">is</span> ConcreteArray:
+<span class="ansi-green-intense-fg ansi-bold">   4333</span>   <span style="color: rgb(95,135,135)"># TODO(mattjj): improve this error by tracking _why_ the indices are not concrete</span>
+<span class="ansi-green-fg">-&gt; 4334</span>   <span class="ansi-bold" style="color: rgb(0,135,0)">raise</span> errors<span style="color: rgb(98,98,98)">.</span>NonConcreteBooleanIndexError(abstract_i)
+<span class="ansi-green-intense-fg ansi-bold">   4335</span> <span class="ansi-bold" style="color: rgb(0,135,0)">elif</span> _ndim(i) <span style="color: rgb(98,98,98)">==</span> <span style="color: rgb(98,98,98)">0</span>:
+<span class="ansi-green-intense-fg ansi-bold">   4336</span>   <span class="ansi-bold" style="color: rgb(0,135,0)">raise</span> <span class="ansi-bold" style="color: rgb(215,95,95)">TypeError</span>(<span style="color: rgb(175,0,0)">&#34;</span><span style="color: rgb(175,0,0)">JAX arrays do not support boolean scalar indices</span><span style="color: rgb(175,0,0)">&#34;</span>)
+
+<span class="ansi-red-fg">NonConcreteBooleanIndexError</span>: Array boolean indices must be concrete; got ShapedArray(bool[100])
+
+See https://jax.readthedocs.io/en/latest/errors.html#jax.errors.NonConcreteBooleanIndexError</pre>
+</div>
+</div>
+
+</div>
+
+</div>
+
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p><br></p>
+
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p><br></p>
+
+</div>
+</div></section></section><section><section>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<h3 id="Things-to-Keep-in-Mind-when-using-JAX-and-JIT">Things to Keep in Mind when using JAX and JIT<a class="anchor-link" href="#Things-to-Keep-in-Mind-when-using-JAX-and-JIT">&#182;</a></h3>
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p><br></p>
+
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>JAX works great for many numerical and scientific programs, but only if they are written with certain constraints.</p>
+<p>I mentioned some before and try to describe some more of them here.</p>
+
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p><br></p>
+
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p><br></p>
+
+</div>
+</div></section></section><section><section>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>JAX provides the <code>jax.numpy</code> wrapper to mimic the more familiar interface for users.</p>
+<p>Under the hood, howoever, JAX performs it's computations using the more powerful, but stricter, <code>jax.lax</code> API.</p>
+<p>We just explored this with some examples.</p>
+
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p><br></p>
+
+</div>
+</div></section></section><section><section>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>But <code>jax.numpy</code> cannot always be directly used as a replacement to <code>numpy</code>.</p>
+<p>For example, unlike NumPy arrays, JAX arrays are always immutable.</p>
+
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p><br></p>
+
+</div>
+</div></section></section><section><section><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[98]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">jax.numpy</span> <span class="k">as</span> <span class="nn">jnp</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="n">arr_jnp</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">])</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">arr_jnp</span><span class="p">))</span>
+
+<span class="n">arr_np</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">])</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">arr_np</span><span class="p">))</span>
+
+<span class="n">arr_np</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">arr_np</span><span class="p">)</span>
+
+<span class="n">arr_jnp</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+<div class="jp-Cell-outputWrapper">
+
+
+<div class="jp-OutputArea jp-Cell-outputArea">
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
+<pre>&lt;class &#39;jaxlib.xla_extension.DeviceArray&#39;&gt;
+&lt;class &#39;numpy.ndarray&#39;&gt;
+[1 0 3 4]
+</pre>
+</div>
+</div>
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr">
+<pre>
+<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg">TypeError</span>                                 Traceback (most recent call last)
+<span class="ansi-green-fg">/tmp/ipykernel_1578/1071326328.py</span> in <span class="ansi-cyan-fg">&lt;module&gt;</span>
+<span class="ansi-green-intense-fg ansi-bold">     13</span> print<span class="ansi-blue-fg">(</span>arr_np<span class="ansi-blue-fg">)</span>
+<span class="ansi-green-intense-fg ansi-bold">     14</span> 
+<span class="ansi-green-fg">---&gt; 15</span><span class="ansi-red-fg"> </span>arr_jnp<span class="ansi-blue-fg">[</span><span class="ansi-cyan-fg">1</span><span class="ansi-blue-fg">]</span> <span class="ansi-blue-fg">=</span> <span class="ansi-cyan-fg">0</span>
+<span class="ansi-green-intense-fg ansi-bold">     16</span> 
+
+<span class="ansi-green-fg">/cvmfs/sft.cern.ch/lcg/views/LCG_102b_swan/x86_64-centos7-gcc11-opt/lib/python3.9/site-packages/jax/_src/numpy/lax_numpy.py</span> in <span class="ansi-cyan-fg">_unimplemented_setitem</span><span class="ansi-blue-fg">(self, i, x)</span>
+<span class="ansi-green-intense-fg ansi-bold">   6793</span>          <span class="ansi-blue-fg">&#34;or another .at[] method: &#34;</span>
+<span class="ansi-green-intense-fg ansi-bold">   6794</span>          &#34;https://jax.readthedocs.io/en/latest/_autosummary/jax.numpy.ndarray.at.html&#34;)
+<span class="ansi-green-fg">-&gt; 6795</span><span class="ansi-red-fg">   </span><span class="ansi-green-fg">raise</span> TypeError<span class="ansi-blue-fg">(</span>msg<span class="ansi-blue-fg">.</span>format<span class="ansi-blue-fg">(</span>type<span class="ansi-blue-fg">(</span>self<span class="ansi-blue-fg">)</span><span class="ansi-blue-fg">)</span><span class="ansi-blue-fg">)</span>
+<span class="ansi-green-intense-fg ansi-bold">   6796</span> 
+<span class="ansi-green-intense-fg ansi-bold">   6797</span> <span class="ansi-green-fg">def</span> _operator_round<span class="ansi-blue-fg">(</span>number<span class="ansi-blue-fg">,</span> ndigits<span class="ansi-blue-fg">=</span><span class="ansi-green-fg">None</span><span class="ansi-blue-fg">)</span><span class="ansi-blue-fg">:</span>
+
+<span class="ansi-red-fg">TypeError</span>: &#39;&lt;class &#39;jaxlib.xla_extension.DeviceArray&#39;&gt;&#39; object does not support item assignment. JAX arrays are immutable. Instead of ``x[idx] = y``, use ``x = x.at[idx].set(y)`` or another .at[] method: https://jax.readthedocs.io/en/latest/_autosummary/jax.numpy.ndarray.at.html</pre>
+</div>
+</div>
+
+</div>
+
+</div>
+
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p><br></p>
+
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p><br></p>
+
+</div>
+</div></section></section><section><section><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[99]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># For updating individual elements, JAX provides an indexed update syntax that returns an updated copy:</span>
+
+<span class="n">arr_jnp</span> <span class="o">=</span> <span class="n">arr_jnp</span><span class="o">.</span><span class="n">at</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>  <span class="c1"># Re-assign the mutated array</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">arr_jnp</span><span class="p">)</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+<div class="jp-Cell-outputWrapper">
+
+
+<div class="jp-OutputArea jp-Cell-outputArea">
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
+<pre>[1 0 3 4]
+</pre>
+</div>
+</div>
+
+</div>
+
+</div>
+
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p><br></p>
+
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p><br></p>
+
+</div>
+</div></section></section><section><section>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p><strong>Pure Functions</strong></p>
+<p>The proper way to use JAX and JIT compilation is to use it only on functionally pure Python functions.</p>
+<p>What does this mean? A pure function will always return the same result if invoked with the same inputs.</p>
+
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p><br></p>
+
+</div>
+</div></section></section><section><section><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[2]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">jax</span> <span class="kn">import</span> <span class="n">jit</span>
+<span class="kn">import</span> <span class="nn">jax.numpy</span> <span class="k">as</span> <span class="nn">jnp</span>
+
+<span class="k">def</span> <span class="nf">fn</span><span class="p">(</span><span class="n">tuple_arr</span><span class="p">):</span>
+    
+    <span class="nb">print</span><span class="p">(</span><span class="n">tuple_arr</span><span class="p">)</span>   <span class="c1"># This is a side-effect</span>
+    
+    <span class="k">return</span> <span class="n">jnp</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">tuple_arr</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">-</span> <span class="n">tuple_arr</span> <span class="o">**</span> <span class="mi">3</span> <span class="o">-</span> <span class="n">tuple_arr</span><span class="p">)</span>
+
+
+<span class="c1"># The side-effects appear during the first run</span>
+<span class="nb">print</span> <span class="p">(</span><span class="s2">&quot;First call: &quot;</span><span class="p">,</span> <span class="n">jit</span><span class="p">(</span><span class="n">fn</span><span class="p">)(</span><span class="n">jnp</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="mi">100</span><span class="p">)))</span>
+
+<span class="c1"># Subsequent runs with parameters of same type and shape may not show the side-effect</span>
+<span class="c1"># This is because JAX now invokes a cached compilation of the function</span>
+<span class="nb">print</span> <span class="p">(</span><span class="s2">&quot;Second call: &quot;</span><span class="p">,</span> <span class="n">jit</span><span class="p">(</span><span class="n">fn</span><span class="p">)(</span><span class="n">jnp</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="mi">100</span><span class="p">)))</span>
 </pre></div>
 
      </div>
@@ -15328,23 +15224,15 @@ $$\text{Python} \rightarrow \text{Intermediate Representation} \rightarrow \text
 <div class="jp-OutputArea-child">
 
     
-    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[3]:</div>
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 
 
-
-
-<div class="jp-RenderedText jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/plain">
-<pre>{ lambda ; a:f32[] b:f32[]. let
-    c:f32[] = div a b
-    d:f32[] = exp b
-    e:f32[] = sub c d
-    f:f32[] = sin c
-    g:f32[] = add f c
-    h:f32[] = sub g d
-    i:f32[] = mul e h
-  in (i,) }</pre>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
+<pre>Traced&lt;ShapedArray(float32[100])&gt;with&lt;DynamicJaxprTrace(level=0/2)&gt;
+First call:  -100.0
+Second call:  -100.0
+</pre>
 </div>
-
 </div>
 
 </div>
@@ -15360,18 +15248,28 @@ $$\text{Python} \rightarrow \text{Intermediate Representation} \rightarrow \text
 </div></section></section><section><section><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[29]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[12]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Let us check if the derivative function we wrote earlier has the same result as JAX&#39;s autodiff calculation</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Global variables defined outside the function will be stored as static when JIT caches the computation</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Manual Gradient Result&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">fn_prime</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span><span class="mf">1.0</span><span class="p">))</span>
+<span class="n">bias</span> <span class="o">=</span> <span class="mf">5.0</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">fn</span><span class="p">(</span><span class="n">tuple_arr</span><span class="p">):</span>
+    
+    <span class="k">return</span> <span class="n">jnp</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">tuple_arr</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">-</span> <span class="n">tuple_arr</span> <span class="o">**</span> <span class="mi">3</span> <span class="o">-</span> <span class="n">tuple_arr</span><span class="p">)</span><span class="o">+</span><span class="n">bias</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;JAX Gradient Result&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">jax</span><span class="o">.</span><span class="n">grad</span><span class="p">(</span><span class="n">fnc_jax</span><span class="p">)(</span><span class="mf">1.0</span><span class="p">,</span><span class="mf">1.0</span><span class="p">))</span>
+<span class="c1"># JAX captures the value of the global during the first run</span>
+<span class="nb">print</span> <span class="p">(</span><span class="s2">&quot;First call: &quot;</span><span class="p">,</span> <span class="n">jit</span><span class="p">(</span><span class="n">fn</span><span class="p">)(</span><span class="n">jnp</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="mi">100</span><span class="p">)))</span>
+
+<span class="n">bias</span> <span class="o">=</span> <span class="n">bias</span> <span class="o">+</span> <span class="mf">10.0</span>  <span class="c1"># Update the global</span>
+
+<span class="c1"># Subsequent runs may silently use the cached value of the globals</span>
+<span class="nb">print</span> <span class="p">(</span><span class="s2">&quot;Second call: &quot;</span><span class="p">,</span> <span class="n">jit</span><span class="p">(</span><span class="n">fn</span><span class="p">)(</span><span class="n">jnp</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="mi">100</span><span class="p">)))</span>
+
+<span class="c1"># JAX re-runs the Python function when the type or shape of the argument changes</span>
+<span class="c1"># This will end up reading the latest value of the global</span>
+<span class="nb">print</span> <span class="p">(</span><span class="s2">&quot;Third call, different type: &quot;</span><span class="p">,</span> <span class="n">jit</span><span class="p">(</span><span class="n">fn</span><span class="p">)(</span><span class="n">jnp</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;int32&#39;</span><span class="p">)))</span>
 </pre></div>
 
      </div>
@@ -15391,12 +15289,9 @@ $$\text{Python} \rightarrow \text{Intermediate Representation} \rightarrow \text
 
 
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
-<pre>Manual Gradient Result
--3.523484
-
-
-JAX Gradient Result
--3.523484
+<pre>First call:  -95.0
+Second call:  -95.0
+Third call, different type:  -85.0
 </pre>
 </div>
 </div>
@@ -15411,80 +15306,20 @@ JAX Gradient Result
 <p><br></p>
 
 </div>
-</div></section></section><section><section><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
-<div class="jp-Cell-inputWrapper">
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[62]:</div>
-<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-     <div class="CodeMirror cm-s-jupyter">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Now let&#39;s check if our breakdown of the gradient function matches JAX&#39;s computation chart</span>
-
-<span class="n">jax</span><span class="o">.</span><span class="n">make_jaxpr</span><span class="p">(</span><span class="n">jax</span><span class="o">.</span><span class="n">jacfwd</span><span class="p">(</span><span class="n">fnc_jax</span><span class="p">))(</span><span class="mf">1.0</span><span class="p">,</span><span class="mf">1.0</span><span class="p">)</span>
-</pre></div>
-
-     </div>
-</div>
-</div>
-</div>
-
-<div class="jp-Cell-outputWrapper">
-
-
-<div class="jp-OutputArea jp-Cell-outputArea">
-
-<div class="jp-OutputArea-child">
-
-    
-    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[62]:</div>
-
-
-
-
-<div class="jp-RenderedText jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/plain">
-<pre>{ lambda ; a:f32[] b:f32[]. let
-    c:i32[1,1] = iota[dimension=0 dtype=int32 shape=(1, 1)] 
-    d:i32[1,1] = add c 0
-    e:i32[1,1] = iota[dimension=1 dtype=int32 shape=(1, 1)] 
-    f:bool[1,1] = eq d e
-    g:f32[1,1] = convert_element_type[new_dtype=float32 weak_type=False] f
-    h:f32[1,1] = slice[limit_indices=(1, 1) start_indices=(0, 0) strides=None] g
-    i:f32[1] = reshape[dimensions=None new_sizes=(1,)] h
-    j:f32[1] = convert_element_type[new_dtype=float32 weak_type=True] i
-    k:f32[] = div a b
-    l:f32[1] = div j b
-    m:f32[] = exp b
-    n:f32[] = sub k m
-    o:f32[] = sin k
-    p:f32[] = cos k
-    q:f32[1] = mul l p
-    r:f32[] = add o k
-    s:f32[1] = add q l
-    t:f32[] = sub r m
-    _:f32[] = mul n t
-    u:f32[1] = mul l t
-    v:f32[1] = mul n s
-    w:f32[1] = add_any u v
-    x:f32[1] = slice[limit_indices=(1,) start_indices=(0,) strides=None] w
-    y:f32[] = reshape[dimensions=None new_sizes=()] x
-  in (y,) }</pre>
-</div>
+</div></section></section><section><section>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>$\textbf{General rule of thumb:}$</p>
+$$\textbf{All the input data should be passed through the function parameters,} \\ 
+\textbf{all the results should be output through the function results.}$$<p><br></p>
+<p>This will also help with the constant-folding issue for large constants passed to the function.</p>
+<p>For more $\textit{sharp edges}$ to be careful of, read <a href="https://jax.readthedocs.io/en/latest/notebooks/Common_Gotchas_in_JAX.html">https://jax.readthedocs.io/en/latest/notebooks/Common_Gotchas_in_JAX.html</a></p>
 
 </div>
-
-</div>
-
-</div>
-
 </div>
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
 <p><br></p>
-
-</div>
-</div></section></section><section><section>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p>You may compare this to our manual implementation <code>fn_prime(x1, x2)</code> of forward mode auto differentiation and see the similarities!</p>
 
 </div>
 </div>
@@ -15496,15 +15331,187 @@ JAX Gradient Result
 </div></section></section><section><section>
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<h2 id="Physics-Analysis">Physics Analysis<a class="anchor-link" href="#Physics-Analysis">&#182;</a></h2>
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p><br></p>
+
+</div>
+</div></section></section><section><section>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>As an example, let us continue with the $H \rightarrow WW \rightarrow 2\ell2\nu$ example we explored in the ML introduction lectures.</p>
 <p><br>
 <br></p>
-<p><div></p>
-<p><center>
-<img src="figures/Py_IR_Trans.png" width="1000"/>
-</center>
-&lt;/div&gt;
+<div>
+<center>
+<img src="figures/WW_Feynman.png" width="750"/>
+    </center>
+</div>
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p><br></p>
+
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>Here I will describe in brief how a typical analysis is done - just enough to get you started on exercises if this is your first time.</p>
+
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p><br></p>
+
+</div>
+</div></section></section><section><section>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p><img align="right" src="figures/Discriminant_Prelim.png" width="500"/></p>
+<p><br></p>
+<p>We trained an ML discriminant between the Signal process $H \rightarrow WW \rightarrow 2\ell2\nu$ and the various backgrounds.</p>
+<p><br></p>
+<p>We will use this binned histogram to do a statistical inference on the parameter $\mu$, where $\mu$ is characterized as the signal-strength: $N_\text{tot} = \mu S + B$.</p>
+<p><br></p>
+<p>Using the discriminant, we can calculate the full likelihood for the value of POI $\mu$.</p>
+<p><br></p>
+<p>We approximate the likelihood of observing $n_i$ events in bin $i$ of the discriminant using a Poisson likelihood centered around the MC expected value in that bin.</p>
+<p><br></p>
+<p>This gives us an expression for the full likelihood, inclusive of all bins:</p>
+<p><br></p>
+$$\mathcal{L} (\mu | \mathcal{D}_{obs}) = \prod_{i}^\text{bins} \frac{e^{-\nu (\mu)} \nu^{N_{obs}} (\mu)}{N_{obs} !}$$
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p><br></p>
+
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p><br></p>
+
+</div>
+</div></section></section><section><section>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>An experimental measurement means very little without an estimate of the errors involved. There are two types: Statistical and Systematic uncertainties.</p>
+<p>Systematic uncertainties arise in all physics analyses where there exist uncertainties in the predictions of any of the simulation steps.</p>
+<p>Uncertainties that arise in the detector simulation are normally categorised as experimental systematic uncertainties.</p>
+<p>Uncertainty in any of the other processing steps is usually categorised as a theoretical systematic uncertainty.</p>
+<p><br>
 <br>
 <br></p>
+<div>
+<center>
+<img src="figures/Unc_chart.png" width="750"/>
+    </center>
+</div>
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p><br></p>
+
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p><br></p>
+
+</div>
+</div></section></section><section><section>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>The effect of systematic uncertainties is described in the probability model using so-called constrained nuisance parameters (NPs), denoted here by $\theta$:</p>
+$$\mathcal{L}_\text{phys} (\mu, \theta | \mathcal{D}_{obs}) = \prod_{i}^\text{bins} \frac{e^{-\nu (\mu, \theta)} \nu (\mu, \theta)^{N_{obs}} }{N_{obs} !}$$<p><br></p>
+<p>The detailed probability model for the auxiliary measurements used to calculate the value of NPs are often approximated as a Gaussian, with central values and errors estimated using either experimental data or theoretical assumptions.</p>
+<p>These parameters are then normalized to have a central value of $\theta=0$, and an uncertainty of $\delta \theta = 1$.</p>
+<p>The constraint term arising from the subsidiary measurement in the likelihood is written simply as:</p>
+$$\mathcal{L}_\text{constraint} (\theta) = \prod_{i}^{N_\text{syst}} \frac{1}{2\pi} \exp \left(-\frac{\theta^2}{2}\right)$$<p><br></p>
+<p>The full $\mu, \theta$-parametrized likelihood is then:</p>
+$$\mathcal{L} (\mu, \theta | \mathcal{D}_{obs}) = \mathcal{L}_\text{phys} (\mu, \theta | \mathcal{D}_{obs}) \cdot \mathcal{L}_\text{constraint} (\theta | \mathcal{D}_{obs})$$
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p><br></p>
+
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p><br></p>
+
+</div>
+</div></section></section><section><section>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>In order to do a hypothesis test using the likelihoods, we must first define a test statistic $t_\mu$.</p>
+<p>In a typical physics analysis, a profiled log of the likelihood ratio between the hypothesis of interest and a nominal hypothesis is chosen as the test statistic.</p>
+<p><br></p>
+$$t_\mu = -2 \log \frac{\mathcal{L} (\mu, \hat{\hat{\theta}} | \mathcal{D}_{obs})}{\mathcal{L} (\hat{\mu}, \hat{\theta} | \mathcal{D}_{obs})}$$<p><br></p>
+<p>where $\hat{\mu}$, $\hat{\theta}$ are the global best-fit values of the parameters $\mu$ and $\theta$ that maxmizes the likelihood:</p>
+$$\hat{\mu}, \hat{\theta} = \underset{\mu, \theta}{\operatorname{argmax}}\mathcal{L} (\mu, \theta | \mathcal{D}_{obs})$$<p><br></p>
+<p>and $\hat{\hat{\theta}}$ is the local best-fit value of $\theta$ for a local value of parameter $\mu$ being scanned:</p>
+$$\hat{\hat{\theta}} = \underset{\theta}{\operatorname{argmax}}\mathcal{L} (\mu_\text{fix}, \theta | \mathcal{D}_{obs})$$<p><br></p>
+<p>The best-fit value of the parameter of interest (POI) $\mu$ given an observed dataset can be calculated by minimizing the log likelihood test statistic:</p>
+$$\mu_\text{MLE} = \underset{\mu}{\operatorname{argmin}} t_\mu $$<p><br></p>
+<p>This quantity $\mu_\text{MLE}$ is called Maximum Likelihood Estimator (MLE) of the POI $\mu$.</p>
+<p>And of course, this is yet another problem that can be solved using gradient-based optimizations!</p>
+
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p><br></p>
+
+</div>
+</div></section></section><section><section>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p><br></p>
+
+</div>
+</div></section></section><section><section>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>Once we have the MLE, we also want to calculate the errors associated with the measurement itself.</p>
+<p>Assuming a perfectly parabolic $t_\mu$ for the Asimov, as is often the case when the asymptotic limit is obeyed (see: <a href="https://arxiv.org/abs/1007.1727">https://arxiv.org/abs/1007.1727</a>), this is estimated using the Hessian Matrix:</p>
+<p><br></p>
+$$H(t_\mu) = \begin{pmatrix}
+  \frac{\partial^2 t_\mu}{\partial \mu^2} (\hat{\mu}, \hat{\theta}) &amp; \frac{\partial^2 t_\mu}{\partial \mu \partial \theta} (\hat{\mu}, \hat{\theta})\\ 
+  \frac{\partial^2 t_\mu}{\partial \mu \partial \theta} (\hat{\mu}, \hat{\theta}) &amp; \frac{\partial^2 t_\mu}{\partial \theta^2} (\hat{\mu}, \hat{\theta})
+\end{pmatrix}$$<p><br></p>
+<p>Here we assume that there is only one NP $\theta$ but in principle there can be arbitrarily many NPs.</p>
+<p>The Hessian matrix is then converted into a covariance matrix $C_{ij} = H(t_\mu)^{-1}$, and then we can calculate the errors using the diagonal entries:</p>
+$$\sigma_{i} = \sqrt{C_{ii}}$$<p>where $i$ can stand for the POI $\mu$ or any of the NPs involved in the fit and $\sigma$ stands for the $\pm 1\sigma$ errors.</p>
+
+</div>
+</div></section></section><section><section>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p><br></p>
+
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p><br></p>
+
+</div>
+</div></section></section><section><section>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>There is a very popular tool used in HEP traditionally, that has the capability to perform this optimization and find the best-fit values using a variety of numerical techniques!</p>
+<p>This tool is called Minuit (<a href="https://en.wikipedia.org/wiki/MINUIT">https://en.wikipedia.org/wiki/MINUIT</a>)</p>
+<p>For our purpose, we will be working with it's Python-friendly implementation iMinuit (<a href="https://iminuit.readthedocs.io/en/stable/index.html">https://iminuit.readthedocs.io/en/stable/index.html</a>).</p>
 
 </div>
 </div>
@@ -15522,80 +15529,11 @@ JAX Gradient Result
 </div></section></section><section><section>
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p>You saw the differences between imperative, functional and array oriented programming in Jim's lecture.</p>
-<p>JAX uses a functional programming paradigm.</p>
-<p>This means we can pass the output of the gradient of a function to another gradient function, and in this manner compute any n-th order derivative.</p>
+<p>While the tool uses numerical techniques by default, we can take advantage of the accelerated array-based computing capabilities of JAX.</p>
+<p>In order to do the fitting optimization, iMinuit makes several (thousands in a full analysis) of repeated calls of the test statistic function until it finds the best fit value.</p>
+<p>This is where we can take advantage of JIT compilation for an accelerated computation.</p>
 
 </div>
-</div>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p><br></p>
-
-</div>
-</div></section></section><section><section><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
-<div class="jp-Cell-inputWrapper">
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[15]:</div>
-<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-     <div class="CodeMirror cm-s-jupyter">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Second order derivative&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>  <span class="n">jax</span><span class="o">.</span><span class="n">jacfwd</span><span class="p">(</span>
-                 <span class="n">jax</span><span class="o">.</span><span class="n">jacfwd</span><span class="p">(</span><span class="n">fnc_jax</span><span class="p">,</span> <span class="n">argnums</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">)),</span> 
-                                     <span class="n">argnums</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">))</span>
-                 <span class="p">(</span><span class="mf">1.0</span><span class="p">,</span><span class="mf">1.0</span><span class="p">)</span>
-              <span class="p">)</span>
-     <span class="p">)</span>
-
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
-
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Third order derivative&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span> <span class="n">jax</span><span class="o">.</span><span class="n">jacfwd</span><span class="p">(</span>
-                <span class="n">jax</span><span class="o">.</span><span class="n">jacfwd</span><span class="p">(</span>
-                <span class="n">jax</span><span class="o">.</span><span class="n">jacfwd</span><span class="p">(</span><span class="n">fnc_jax</span><span class="p">,</span> <span class="n">argnums</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">)),</span> 
-                                    <span class="n">argnums</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">)),</span> 
-                                    <span class="n">argnums</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">))</span>
-                <span class="p">(</span><span class="mf">1.0</span><span class="p">,</span><span class="mf">1.0</span><span class="p">)</span>
-              <span class="p">)</span>
-     <span class="p">)</span>
-</pre></div>
-
-     </div>
-</div>
-</div>
-</div>
-
-<div class="jp-Cell-outputWrapper">
-
-
-<div class="jp-OutputArea jp-Cell-outputArea">
-
-<div class="jp-OutputArea-child">
-
-    
-    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-
-
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
-<pre>Second order derivative
-[[ 4.526489  -7.908262 ]
- [-7.9082613 33.122337 ]]
-
-
-Third order derivative
-[[[-1.5960214 -5.1696005]
-  [-5.169601  11.793512 ]]
-
- [[-5.1696005 11.793512 ]
-  [11.793512  33.112816 ]]]
-</pre>
-</div>
-</div>
-
-</div>
-
-</div>
-
 </div>
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
@@ -15605,9 +15543,7 @@ Third order derivative
 </div></section></section><section><section>
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p>That's all for today's lecture!</p>
-<p>In the next one we will explore more of how JIT compilation can speed up execution of the code, by doing a maximum likelihood fit on ATLAS data!</p>
-<p>Let's move to the hands-on exercise!</p>
+<p>We shall explore this and more in the today's exercise.</p>
 
 </div>
 </div></section></section>
