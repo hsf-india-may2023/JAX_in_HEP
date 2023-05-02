@@ -14,10 +14,10 @@ Note that the Jupyter notebooks for lectures are designed to be converted to sli
 
 References:
 
-JAX repo: https://github.com/google/jax
+1. JAX repo: https://github.com/google/jax
 
-JAX readthedocs: https://jax.readthedocs.io/en/latest/index.html
+2. JAX readthedocs: https://jax.readthedocs.io/en/latest/index.html
 
-HistFactory (Interpolation Function used in the tutorial): https://cds.cern.ch/record/1456844/files/CERN-OPEN-2012-016.pdf
+3. HistFactory (Interpolation Function used in the tutorial): https://cds.cern.ch/record/1456844/files/CERN-OPEN-2012-016.pdf
 
-For inspiration of the auto-diff example used in the tutorial: https://www.youtube.com/watch?v=wG_nF1awSSY&t=255s
+4. For inspiration of the auto-diff example used in the tutorial: https://www.youtube.com/watch?v=wG_nF1awSSY&t=255s
