@@ -8,4 +8,4 @@ Slides:
 
 [Auto differentiation with JAX](https://hsf-india-may2023.github.io/JAX_in_HEP/Lecture_1_AutoDiff_JAX.slides.html)
 
-[JIT tracing](https://github.com/hsf-india-may2023/JAX_in_HEP/blob/gh-pages/Lecture_2_JIT_Tracing_Physics.slides.html)
+[JIT tracing](https://hsf-india-may2023.github.io/JAX_in_HEP/Lecture_2_JIT_Tracing_Physics.slides.html)
