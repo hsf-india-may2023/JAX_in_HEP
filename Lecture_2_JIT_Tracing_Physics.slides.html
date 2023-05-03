@@ -14285,7 +14285,6 @@ $$\text{Python} \rightarrow \text{Intermediate Representation} \rightarrow \text
 <p><center>
 <img src="figures/func_min.png" width="300"/>
 </center>
-&lt;/div&gt;
 <br></p>
 <p>During the first computation, JAX performs the optimizations which takes some time, but the subsequent computations are super fast as we will see.</p>
 
@@ -15329,9 +15328,9 @@ Third call, different type:  -85.0
 </div></section></section><section><section>
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p>$\textbf{General rule of thumb:}$</p>
-$$\textbf{All the input data should be passed through the function parameters,} \\ 
-\textbf{all the results should be output through the function results.}$$<p><br></p>
+<p><strong>General rule of thumb:</strong></p>
+<p><strong>All the input data should be passed through the function parameters, and all the results should be output through the function results.</strong></p>
+<p><br></p>
 <p>This will also help with the constant-folding issue for large constants passed to the function.</p>
 <p><br></p>
 <p>For more $\textit{sharp edges}$ to be careful of, read <a href="https://jax.readthedocs.io/en/latest/notebooks/Common_Gotchas_in_JAX.html">https://jax.readthedocs.io/en/latest/notebooks/Common_Gotchas_in_JAX.html</a></p>
@@ -15378,7 +15377,7 @@ $$\textbf{All the input data should be passed through the function parameters,} 
 <p><br></p>
 
 </div>
-</div>
+</div></section></section><section><section>
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
 <p>Here I will describe in brief how a typical analysis is done - just enough to get you started on exercises if this is your first time.</p>
@@ -15422,9 +15421,12 @@ $$\mathcal{L} (\mu | \mathcal{D}_{obs}) = \prod_{i}^\text{bins} \frac{e^{-\nu (\
 </div></section></section><section><section>
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p>An experimental measurement means very little without an estimate of the errors involved. There are two types: Statistical and Systematic uncertainties.</p>
+<p>An experimental measurement means very little without an estimate of the errors involved. There are two types: <strong>Statistical</strong> and <strong>Systematic</strong> uncertainties.</p>
+<p><br></p>
 <p>Systematic uncertainties arise in all physics analyses where there exist uncertainties in the predictions of any of the simulation steps.</p>
+<p><br></p>
 <p>Uncertainties that arise in the detector simulation are normally categorised as experimental systematic uncertainties.</p>
+<p><br></p>
 <p>Uncertainty in any of the other processing steps is usually categorised as a theoretical systematic uncertainty.</p>
 <p><br>
 <br>
@@ -15453,7 +15455,9 @@ $$\mathcal{L} (\mu | \mathcal{D}_{obs}) = \prod_{i}^\text{bins} \frac{e^{-\nu (\
 <p>The effect of systematic uncertainties is described in the probability model using so-called constrained nuisance parameters (NPs), denoted here by $\theta$:</p>
 $$\mathcal{L}_\text{phys} (\mu, \theta | \mathcal{D}_{obs}) = \prod_{i}^\text{bins} \frac{e^{-\nu (\mu, \theta)} \nu (\mu, \theta)^{N_{obs}} }{N_{obs} !}$$<p><br></p>
 <p>The detailed probability model for the auxiliary measurements used to calculate the value of NPs are often approximated as a Gaussian, with central values and errors estimated using either experimental data or theoretical assumptions.</p>
+<p><br></p>
 <p>These parameters are then normalized to have a central value of $\theta=0$, and an uncertainty of $\delta \theta = 1$.</p>
+<p><br></p>
 <p>The constraint term arising from the subsidiary measurement in the likelihood is written simply as:</p>
 $$\mathcal{L}_\text{constraint} (\theta) = \prod_{i}^{N_\text{syst}} \frac{1}{2\pi} \exp \left(-\frac{\theta^2}{2}\right)$$<p><br></p>
 <p>The full $\mu, \theta$-parametrized likelihood is then:</p>
