@@ -14133,18 +14133,24 @@ div.jp-OutputPrompt {
 <p><br></p>
 
 </div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p><br></p>
+
+</div>
 </div></section></section><section><section>
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p>What these lectures are:</p>
+<p><strong>What these lectures are:</strong></p>
 <p><br></p>
-<ol>
+<ul>
 <li>These lectures are a condensation of my own personal experience and knowledge - developed over the last couple of years to perform a complicated new type of analysis that might not have been possible without JAX.</li>
-</ol>
+</ul>
 <p><br></p>
-<ol>
+<ul>
 <li>Over the course of time, the knowledge shared in these lectures helped me optimize a series of computations that took a week when I started to one that now takes 10 hours at most!</li>
-</ol>
+</ul>
 
 </div>
 </div>
@@ -14156,15 +14162,15 @@ div.jp-OutputPrompt {
 </div></section></section><section><section>
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p>What these lectures are not:</p>
+<p><strong>What these lectures are not:</strong></p>
 <p><br></p>
-<ol>
+<ul>
 <li>These are by no means a comprehensive overview of JAX - they are meant to be sufficient enough for you to start implementing JAX in your own physics analysis.</li>
-</ol>
+</ul>
 <p><br></p>
-<ol>
+<ul>
 <li>While I will describe a bit how JAX works under the hood, it is only a high-level user-focused overview meant for you to understand how to implement JAX correctly and most efficently in your own analysis.</li>
-</ol>
+</ul>
 
 </div>
 </div>
@@ -14206,7 +14212,7 @@ div.jp-OutputPrompt {
 <p><br></p>
 <div>   
 <center>
-        <img src="figures/HEP_applications.png" width="1000"/>
+        <img src="figures/HEP_applications.png" width="800"/>
 </center>
 </div><p><br></p>
 <p>This latter application will be the focus of this set of lectures.</p>
@@ -14228,9 +14234,11 @@ div.jp-OutputPrompt {
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
 <p>Let us start with the most popular statistical tool nowadays - Machine Learning.</p>
+<p><br></p>
 <p>In ML, we typically use differentiation to perform gradient-based optimization of the ML model parameters $\omega$ for a given objective.</p>
-<p>Here the $\omega$ refer to the set of tune-able parameters in a ML model, such as the neurons in a Neural Network (NN).</p>
+<p><br></p>
 <p>Our task is then to find the optimal set of parameter values $\omega$ that minimizes an appropriate loss (or objective) function:</p>
+<p><br></p>
 $$\underset{\omega}{\operatorname{argmin}} \mathcal{L}(\omega)$$
 </div>
 </div>
@@ -14249,7 +14257,9 @@ $$\underset{\omega}{\operatorname{argmin}} \mathcal{L}(\omega)$$
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
 <p>How do we do this? A commonly used algorithm, called the gradient descent is a first-order iterative optimization algorithm for finding a local minimum of a differentiable function.</p>
+<p><br></p>
 <p>The idea is to take repeated steps in the opposite direction of the gradient of the function at the current point, because this is the direction of steepest descent.</p>
+<p><br></p>
 $$\vec{\omega}_{i+1} = \vec{\omega}_{i} - \lambda \nabla_\omega \mathcal{L}(\vec{\omega}_i)$$<p><br></p>
 <p><div></p>
 <p><center>
@@ -14267,8 +14277,8 @@ $$\vec{\omega}_{i+1} = \vec{\omega}_{i} - \lambda \nabla_\omega \mathcal{L}(\vec
 </div></section></section><section><section>
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p>The figure is for a simple example with only one input parameter.</p>
-<p>The number of parameters in a typical NN can range from thousands to billions.</p>
+<p>The figure is for a simple example with only one input parameter. The number of parameters in a typical NN can range from thousands to billions.</p>
+<p><br></p>
 <p>Time efficient and accurate derivative estimation is thus a very important problem in computing.</p>
 
 </div>
@@ -14342,12 +14352,6 @@ $$f(x) = x^2+5$$<p>In Python this can be written as</p>
 <p><br></p>
 
 </div>
-</div>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p><br></p>
-
-</div>
 </div></section></section><section><section><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-InputArea jp-Cell-inputArea">
@@ -14380,7 +14384,9 @@ $$f(x) = x^2+5$$<p>In Python this can be written as</p>
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
 <p>This is easy, we now have a new Python function that gives us the derivative of $f(x)$ for any value of $x$!</p>
+<p><br></p>
 <p>This way of calculating the derivatives using a computer is known as $\textbf{Manual Differentiation}$, for obvious reasons.</p>
+<p><br></p>
 <p>While this type of approach is fairly intuitive, it can quickly become tedious for more complicated functions - common in statistics.</p>
 
 </div>
@@ -14400,31 +14406,23 @@ $$f(x) = x^2+5$$<p>In Python this can be written as</p>
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
 <p>Another way we can compute the derivatives is using $\textbf{Numerical Differentiation}$, which uses finite differences to compute the derivatives.</p>
-
-</div>
-</div>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
 <p><br></p>
-
-</div>
-</div></section></section><section><section>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
 <p>A derivative of a scalar valued function $f(x)$ for an n-dimensional vector $x$ is defined as follows:</p>
-$$\frac{\partial f}{\partial x} = \underset{h \rightarrow 0}{\operatorname{lim}} \frac{f(x+h)-f(x)}{h} $$
-</div>
-</div>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p><br></p>
-
-</div>
-</div></section></section><section><section>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+$$\frac{\partial f}{\partial x} = \underset{h \rightarrow 0}{\operatorname{lim}} \frac{f(x+h)-f(x)}{h} $$<p><br></p>
 <p>We can update this definition so as to include very small, but non-zero values of h:</p>
 $$\frac{\partial f}{\partial x} \approx \frac{f(x+h)-f(x)}{h} $$
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p><br></p>
+
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p><br></p>
+
 </div>
 </div></section></section><section><section><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
 <div class="jp-Cell-inputWrapper">
@@ -14442,7 +14440,7 @@ $$\frac{\partial f}{\partial x} \approx \frac{f(x+h)-f(x)}{h} $$
 
 <span class="k">def</span> <span class="nf">f_prime_num</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">h</span><span class="p">):</span>
     
-    <span class="k">return</span> <span class="p">((</span><span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="o">+</span><span class="n">h</span><span class="p">))</span> <span class="o">-</span> <span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="p">))</span><span class="o">/</span><span class="n">h</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="o">+</span><span class="n">h</span><span class="p">)</span> <span class="o">-</span> <span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="p">))</span><span class="o">/</span><span class="n">h</span>
 </pre></div>
 
      </div>
@@ -14456,7 +14454,7 @@ $$\frac{\partial f}{\partial x} \approx \frac{f(x+h)-f(x)}{h} $$
 <p><br></p>
 
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
+</div></section></section><section><section><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-InputArea jp-Cell-inputArea">
 <div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[17]:</div>
@@ -14605,7 +14603,9 @@ $$\frac{\partial f}{\partial x} \approx \frac{f(x+h)-f(x)}{h} $$
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
 <p>The main limitation of this approach comes from elsewhere. Generalizing the derivative for more than one parameter:</p>
-$$\frac{\partial f}{\partial x_i} \approx \frac{f(x_i+h e_i)-f(x_i)}{h} $$<p>We can see how such a derivative requires $n$ individual computations. For ML models, the number of tune-able parameters typically range from thousands to billions, making this method un-feasible in practice.</p>
+<p><br></p>
+$$\frac{\partial f}{\partial x_i} \approx \frac{f(x_i+h e_i)-f(x_i)}{h} $$<p><br></p>
+<p>We can see how such a derivative requires $n$ individual computations. For ML models, the number of tune-able parameters typically range from thousands to billions, making this method un-feasible in practice.</p>
 
 </div>
 </div>
@@ -14624,7 +14624,9 @@ $$\frac{\partial f}{\partial x_i} \approx \frac{f(x_i+h e_i)-f(x_i)}{h} $$<p>We 
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
 <p>$\textbf{Symbolic Differentiation}$ program can convert a function of our choice into it's respective derivative function, by transforming the function using the standard derivative tools.</p>
+<p><br></p>
 <p>This is essentially an automated version of the Manual Differentiation technique.</p>
+<p><br></p>
 <p><br></p>
 <div>
 <center>
@@ -14642,6 +14644,7 @@ $$\frac{\partial f}{\partial x_i} \approx \frac{f(x_i+h e_i)-f(x_i)}{h} $$<p>We 
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
 <p>This might seem like an optimal technique but it suffers from major flaws. One such limitation is known as Expression Swelling.</p>
+<p><br></p>
 <p>What this means is that a function's derivative can turn into a very convoluted expression when written out explicitly.</p>
 
 </div>
@@ -14655,8 +14658,12 @@ $$\frac{\partial f}{\partial x_i} \approx \frac{f(x_i+h e_i)-f(x_i)}{h} $$<p>We 
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
 <p>Let's take an example of the soft ReLU function, commonly used as an activation function in NN models:</p>
-$$ \log \left(1.0 + e^{\vec{w}\cdot \vec{x} + \vec{b}} \right) $$<p>The derivative of this, w.r.t only two parameters is fairly involved:</p>
-$$ \frac{e^{b_1+b_2+ w_1 x + w_2 \log \left[ 1 + e^{b_1+w_1 x} \right] } w_2 x}{(1 + e^{b_1+w_1 x})\left(1 + e^{b_2+w_2 \log \left[1 + e^{b_1+w_1 x}\right]}\right)}$$<p>This is with just two parameters; with thousands of them (as is often typical in a hidden layer in an ML model) this quickly becomes so complex, it is impractical to calculate efficiently.</p>
+<p><br></p>
+$$ \log \left(1.0 + e^{\vec{w}\cdot \vec{x} + \vec{b}} \right) $$<p><br></p>
+<p>The derivative of this, w.r.t only two parameters is fairly involved:</p>
+<p><br></p>
+$$ \frac{e^{b_1+b_2+ w_1 x + w_2 \log \left[ 1 + e^{b_1+w_1 x} \right] } w_2 x}{(1 + e^{b_1+w_1 x})\left(1 + e^{b_2+w_2 \log \left[1 + e^{b_1+w_1 x}\right]}\right)}$$<p><br></p>
+<p>This is with just two parameters; with thousands of them (as is often typical in a hidden layer in an ML model) this quickly becomes so complex, it is impractical to calculate efficiently.</p>
 
 </div>
 </div>
@@ -14669,6 +14676,7 @@ $$ \frac{e^{b_1+b_2+ w_1 x + w_2 \log \left[ 1 + e^{b_1+w_1 x} \right] } w_2 x}{
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
 <p>Moreover, the function passed to a symbolic differentiation program needs to be of a closed form - i.e. we cannot have loops or if/else conditions in the function.</p>
+<p><br></p>
 <p>As we will see in the next lectures, control flow operations are particularly essential in the calculation of Hessian in an experimental analyses.</p>
 
 </div>
@@ -14688,6 +14696,7 @@ $$ \frac{e^{b_1+b_2+ w_1 x + w_2 \log \left[ 1 + e^{b_1+w_1 x} \right] } w_2 x}{
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
 <p>It might seem hopeless than to compute these second derivatives with millions of parameters in a time practical way - and yet we keep seeing NNs with billions of tune-able parameters!</p>
+<p><br></p>
 <p>Enter $\textbf{Automatic Differentiation}$. Rather than produce an expression for the derivative of a function, it calculates directly the exact numerical value of the function and it's derivatives for a given set of input parameters.</p>
 
 </div>
@@ -14707,8 +14716,9 @@ $$ \frac{e^{b_1+b_2+ w_1 x + w_2 \log \left[ 1 + e^{b_1+w_1 x} \right] } w_2 x}{
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
 <p>To best understand automatic differentiation, it is easiest to start with a simple example. Let's say we want to find the value of the first-order derivative of the following function:</p>
-$$f(x_1, x_2) = \left(\frac{x_1}{x_2} - e^{x_2} \right) \cdot \left(sin\left(\frac{x_1}{x_2}\right) + \frac{x_1}{x_2} - e^{x_2}\right)$$<p>Seems a bit complex, especially if we try to perform manual or symbolic differentiation on this.</p>
-<p>But with some basic algebra, we can convert this function into a series of elementary computations.</p>
+<p><br></p>
+$$f(x_1, x_2) = \left(\frac{x_1}{x_2} - e^{x_2} \right) \cdot \left(sin\left(\frac{x_1}{x_2}\right) + \frac{x_1}{x_2} - e^{x_2}\right)$$<p><br></p>
+<p>Seems a bit complex, especially if we try to perform manual or symbolic differentiation on this. But with some basic algebra, we can convert this function into a series of elementary computations.</p>
 
 </div>
 </div>
@@ -14781,11 +14791,14 @@ $$f(x_1, x_2) = \left(\frac{x_1}{x_2} - e^{x_2} \right) \cdot \left(sin\left(\fr
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
 <p>Do you see what we did here? Let's plot it out:</p>
+<p><br></p>
 <div>
 <center>
 <img src="figures/forward_pass_nodiff.png" width="1000"/>
     </center>
-</div><p>We start with the most basic operations involved in the function and then we use these computations to eventually compute the full function value.</p>
+</div><p><br></p>
+<p>We start with the most basic operations involved in the function and then we use these computations to eventually compute the full function value.</p>
+<p><br></p>
 <p>At each step, we use the computed values from the previous step, making the code more efficient.</p>
 
 </div>
@@ -14805,6 +14818,7 @@ $$f(x_1, x_2) = \left(\frac{x_1}{x_2} - e^{x_2} \right) \cdot \left(sin\left(\fr
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
 <p>This might seem like a simple trick - but together with the chain rule of differentiation, this can be exploited to compute accurate and efficient derivatives of arbitrarily complex functions.</p>
+<p><br></p>
 <p>Let's continue with the function above. Let's re-write it as follows:</p>
 
 </div>
@@ -14898,6 +14912,7 @@ $$f(x_1, x_2) = \left(\frac{x_1}{x_2} - e^{x_2} \right) \cdot \left(sin\left(\fr
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
 <p>One can then easily calculate the value of the derivative wrt <code>x1</code> or <code>x2</code> at the specified input value, just as in <code>fn_prime(x1, x2)</code> defined in the previous slide. (For derivative with <code>x2</code> we need to do another forward pass)</p>
+<p><br></p>
 <p>This is referred to as the forward mode automatic differentiation to be specific, as opposed to reverse mode auto-differentiation, but we will get to this distinction in the exercises.</p>
 
 </div>
@@ -14960,6 +14975,7 @@ $$f(x_1, x_2) = \left(\frac{x_1}{x_2} - e^{x_2} \right) \cdot \left(sin\left(\fr
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
 <p>JAX provides a simple and powerful numpy-like user API for writing accelerated numerical code, to perform array-based computing.</p>
+<p><br></p>
 <p>It has the capability to perform something called Composable Function Transformations - transforming our Python and NumPy code to perform automatic differentiation, JIT compilation, parallelization on multi-core hardware, etc.</p>
 <p><br></p>
 $$\text{Python} \rightarrow \text{Intermediate Representation} \rightarrow \text{Transformations}$$<p><br></p>
@@ -14981,6 +14997,7 @@ $$\text{Python} \rightarrow \text{Intermediate Representation} \rightarrow \text
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
 <p>JAX is not just a tool for auto-differentiation. It also provides a range of tools for accelerated computation.</p>
+<p><br></p>
 <p>It is built on top of the XLA (Accelerated Linear Algebra) compiler, which allows it to run fast on a variety of hardware platforms, including CPUs, GPUs, and TPUs.</p>
 
 </div>
@@ -15000,7 +15017,9 @@ $$\text{Python} \rightarrow \text{Intermediate Representation} \rightarrow \text
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
 <p>One of the key features of JAX includes JIT compilation, which can speed up a piece of code by compiling it just-in-time.</p>
+<p><br></p>
 <p>This can save a lot of time and effort, especially for repeated evaluations of complex functions with many parameters.</p>
+<p><br></p>
 <p>We will be exploring more on the workings of JAX and of JIT compilation in the next two lectures.</p>
 
 </div>
@@ -15032,7 +15051,9 @@ $$\text{Python} \rightarrow \text{Intermediate Representation} \rightarrow \text
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
 <p>We saw how forward auto-differntiation works in practice using the functions <code>fn</code> and <code>fn_prime</code>.</p>
+<p><br></p>
 <p>Let us see how JAX handles this function and computes it's derivative.</p>
+<p><br></p>
 <p>First let us start with the simpler example:</p>
 
 </div>
@@ -15071,8 +15092,11 @@ $$\text{Python} \rightarrow \text{Intermediate Representation} \rightarrow \text
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
 <p>As mentioned before, JAX creates intermediate representation of our Python function before execution.</p>
+<p><br></p>
 <p>It does so, using a fixed set of $\textit{primitive}$ operations handled by <code>jax.lax</code>, e.g. <code>lax.add</code>,<code>lax.sub</code>, etc.</p>
+<p><br></p>
 <p>These are exactly the type of elementary operations we used to transform our Python function before!</p>
+<p><br></p>
 <p>JAX knows how to perform composable transformations, like <code>grad</code>, <code>jit</code>, etc on these primitive operations.</p>
 
 </div>
@@ -15209,6 +15233,7 @@ $$\text{Python} \rightarrow \text{Intermediate Representation} \rightarrow \text
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
 <p>Okay, that was fairly intuitive and just what we expected!</p>
+<p><br></p>
 <p>Now let's do this again with the more complicated function that we computed by manually performing forward-mode differentiation earlier.</p>
 
 </div>
@@ -15282,7 +15307,9 @@ $$\text{Python} \rightarrow \text{Intermediate Representation} \rightarrow \text
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
 <p>The <code>div a b</code> seems to be repeated three times in the JAX computation.</p>
+<p><br></p>
 <p>This is because, as of now, we do not compile it using JIT. So the computation chart follows the way $\textit{you}$ write the function.</p>
+<p><br></p>
 <p>Once we do, JIT recognizes and de-duplicates the repeated operations where necessary. We shall explore this in the next lecture.</p>
 
 </div>
@@ -15527,7 +15554,9 @@ JAX Gradient Result
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
 <p>You saw the differences between imperative, functional and array oriented programming in Jim's lecture.</p>
+<p><br></p>
 <p>JAX uses a functional programming paradigm.</p>
+<p><br></p>
 <p>This means we can pass the output of the gradient of a function to another gradient function, and in this manner compute any n-th order derivative.</p>
 
 </div>

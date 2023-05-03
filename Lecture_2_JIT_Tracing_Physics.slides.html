@@ -14111,6 +14111,7 @@ div.jp-OutputPrompt {
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
 <p>We saw how JAX has a numpy-like user API for performing array-based computing.</p>
+<p><br></p>
 <p>It has the capability to perform Composable Function Transformations on our Python/NumPy code and use it with the XLA compiler to perform super-fast computations on CPU, GPU or TPU</p>
 <p><br></p>
 $$\text{Python} \rightarrow \text{Intermediate Representation} \rightarrow \text{Transformations}$$<p><br></p>
@@ -14132,7 +14133,9 @@ $$\text{Python} \rightarrow \text{Intermediate Representation} \rightarrow \text
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
 <p>Examples of composable transformations include automatic differentiation, JIT compilation, parallelization on multi-core hardware (pmap), automatic vectorization (vmap) and automatic differentiation.</p>
+<p><br></p>
 <p>We explored automatic differentiation in the last lecture.</p>
+<p><br></p>
 <p>In this lecture, we will explore JIT compilation as well as find out a bit more about how JAX works under the hood with these intermediate representations and transformations.</p>
 
 </div>
@@ -14163,6 +14166,7 @@ $$\text{Python} \rightarrow \text{Intermediate Representation} \rightarrow \text
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
 <p>JIT stands for Just-In-Time compilation, as opposed to AOT (Ahead-Of-Time) compilation.</p>
+<p><br></p>
 <p>As the name suggests, compilation of the code happens $\textit{just in time}$ for computation.</p>
 
 </div>
@@ -14274,6 +14278,7 @@ $$\text{Python} \rightarrow \text{Intermediate Representation} \rightarrow \text
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
 <p>As mentioned before, the power of JIT compilation only comes in when we have intend to repeat function calls many times.</p>
+<p><br></p>
 <p>For example finding the minimum of a loss function by repeatedly calling the loss function and it's gradient:</p>
 <p><br></p>
 <p><div></p>
@@ -14433,6 +14438,7 @@ $$\text{Python} \rightarrow \text{Intermediate Representation} \rightarrow \text
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
 <p>It seems as if JAX re-compiled our function when we changed the input.</p>
+<p><br></p>
 <p>To better understand what's going on, let's find out how JAX performs under the hood.</p>
 
 </div>
@@ -14514,7 +14520,9 @@ $$\text{Python} \rightarrow \text{Intermediate Representation} \rightarrow \text
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
 <p>JAX first converts our input to create an abstract object called <code>ShapedArray</code> that has a specific data type <code>float32</code> and size <code>100</code>.</p>
+<p><br></p>
 <p>That is why, rather than printing the data we passed to the function, it prints this object that stands-in for the data.</p>
+<p><br></p>
 <p>But this object has no specific value!</p>
 
 </div>
@@ -14581,6 +14589,7 @@ $$\text{Python} \rightarrow \text{Intermediate Representation} \rightarrow \text
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
 <p>Then, it passes this <code>ShapedArray</code> object through the primitive <code>lax</code> operations to create a computation chart for function execution. This part of the process is known as $\textit{tracing}$.</p>
+<p><br></p>
 <p>But note that the <code>ShapedArray</code> object has a specific size and type now <code>a:f32[100]</code> - but that is all it has.</p>
 
 </div>
@@ -14594,7 +14603,9 @@ $$\text{Python} \rightarrow \text{Intermediate Representation} \rightarrow \text
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
 <p>Once JAX finishes creating the computation chart with <code>lax</code> operations, it then optimizes the code for the XLA compiler to run on any machine of choice.</p>
+<p><br></p>
 <p>This HLO code resulting from the optimization step is cached - and can then be efficiently applied within XLA to new inputs with the same shape and dtype, without having to re-execute the Python code.</p>
+<p><br></p>
 <p>Upon repeated executions the cached code is run on the machine with super-fast execution times!</p>
 <p><br>
 <br></p>
@@ -14611,6 +14622,7 @@ $$\text{Python} \rightarrow \text{Intermediate Representation} \rightarrow \text
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
 <p>To see this in action, note how when we re-execute the function, the print statement is no longer executed.</p>
+<p><br></p>
 <p>This is because, there is no additional tracing of the Python function - under the hood JAX is just using the cached computation chart it already optimized!</p>
 
 </div>
@@ -14678,6 +14690,7 @@ $$\text{Python} \rightarrow \text{Intermediate Representation} \rightarrow \text
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
 <p>By default JAX executes operations one at a time, in sequence.</p>
+<p><br></p>
 <p>We saw an example of this in the last lecture with our purpose-ly bad written function and how JAX converted it.</p>
 
 </div>
@@ -14751,6 +14764,7 @@ $$\text{Python} \rightarrow \text{Intermediate Representation} \rightarrow \text
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
 <p>Using a just-in-time (JIT) compilation decorator, sequences of operations can be optimized together and run at once.</p>
+<p><br></p>
 <p>Let's see this in action!</p>
 
 </div>
@@ -14849,6 +14863,7 @@ ENTRY %main.13 (Arg_0.1: f32[], Arg_1.2: f32[]) -&gt; f32[] {
 <p>In principle, JIT performs a range of optimizations to make the code more efficient - we do not need the specifics, only that it works very well!</p>
 <p><br></p>
 <p>Not all JAX code can be JIT compiled, as it requires array shapes to be static &amp; known at compile time.</p>
+<p><br></p>
 <p>As we saw before, JIT compilation traces a <code>ShapedArray</code> object with fixed shape and type - you cannot have a computation that requires it to change it's shape based on a specific value.</p>
 
 </div>
@@ -14978,6 +14993,7 @@ See https://jax.readthedocs.io/en/latest/errors.html#jax.errors.NonConcreteBoole
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
 <p>JAX works great for many numerical and scientific programs, but only if they are written with certain constraints.</p>
+<p><br></p>
 <p>I mentioned some before and try to describe some more of them here.</p>
 
 </div>
@@ -14997,7 +15013,9 @@ See https://jax.readthedocs.io/en/latest/errors.html#jax.errors.NonConcreteBoole
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
 <p>JAX provides the <code>jax.numpy</code> wrapper to mimic the more familiar interface for users.</p>
+<p><br></p>
 <p>Under the hood, howoever, JAX performs it's computations using the more powerful, but stricter, <code>jax.lax</code> API.</p>
+<p><br></p>
 <p>We just explored this with some examples.</p>
 
 </div>
@@ -15011,6 +15029,7 @@ See https://jax.readthedocs.io/en/latest/errors.html#jax.errors.NonConcreteBoole
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
 <p>But <code>jax.numpy</code> cannot always be directly used as a replacement to <code>numpy</code>.</p>
+<p><br></p>
 <p>For example, unlike NumPy arrays, JAX arrays are always immutable.</p>
 
 </div>
@@ -15164,7 +15183,9 @@ See https://jax.readthedocs.io/en/latest/errors.html#jax.errors.NonConcreteBoole
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
 <p><strong>Pure Functions</strong></p>
+<p><br></p>
 <p>The proper way to use JAX and JIT compilation is to use it only on functionally pure Python functions.</p>
+<p><br></p>
 <p>What does this mean? A pure function will always return the same result if invoked with the same inputs.</p>
 
 </div>
@@ -15312,6 +15333,7 @@ Third call, different type:  -85.0
 $$\textbf{All the input data should be passed through the function parameters,} \\ 
 \textbf{all the results should be output through the function results.}$$<p><br></p>
 <p>This will also help with the constant-folding issue for large constants passed to the function.</p>
+<p><br></p>
 <p>For more $\textit{sharp edges}$ to be careful of, read <a href="https://jax.readthedocs.io/en/latest/notebooks/Common_Gotchas_in_JAX.html">https://jax.readthedocs.io/en/latest/notebooks/Common_Gotchas_in_JAX.html</a></p>
 
 </div>
@@ -15482,6 +15504,7 @@ $$\mu_\text{MLE} = \underset{\mu}{\operatorname{argmin}} t_\mu $$<p><br></p>
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
 <p>Once we have the MLE, we also want to calculate the errors associated with the measurement itself.</p>
+<p><br></p>
 <p>Assuming a perfectly parabolic $t_\mu$ for the Asimov, as is often the case when the asymptotic limit is obeyed (see: <a href="https://arxiv.org/abs/1007.1727">https://arxiv.org/abs/1007.1727</a>), this is estimated using the Hessian Matrix:</p>
 <p><br></p>
 $$H(t_\mu) = \begin{pmatrix}
@@ -15489,7 +15512,9 @@ $$H(t_\mu) = \begin{pmatrix}
   \frac{\partial^2 t_\mu}{\partial \mu \partial \theta} (\hat{\mu}, \hat{\theta}) &amp; \frac{\partial^2 t_\mu}{\partial \theta^2} (\hat{\mu}, \hat{\theta})
 \end{pmatrix}$$<p><br></p>
 <p>Here we assume that there is only one NP $\theta$ but in principle there can be arbitrarily many NPs.</p>
+<p><br></p>
 <p>The Hessian matrix is then converted into a covariance matrix $C_{ij} = H(t_\mu)^{-1}$, and then we can calculate the errors using the diagonal entries:</p>
+<p><br></p>
 $$\sigma_{i} = \sqrt{C_{ii}}$$<p>where $i$ can stand for the POI $\mu$ or any of the NPs involved in the fit and $\sigma$ stands for the $\pm 1\sigma$ errors.</p>
 
 </div>
@@ -15509,7 +15534,9 @@ $$\sigma_{i} = \sqrt{C_{ii}}$$<p>where $i$ can stand for the POI $\mu$ or any of
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
 <p>There is a very popular tool used in HEP traditionally, that has the capability to perform this optimization and find the best-fit values using a variety of numerical techniques!</p>
+<p><br></p>
 <p>This tool is called Minuit (<a href="https://en.wikipedia.org/wiki/MINUIT">https://en.wikipedia.org/wiki/MINUIT</a>)</p>
+<p><br></p>
 <p>For our purpose, we will be working with it's Python-friendly implementation iMinuit (<a href="https://iminuit.readthedocs.io/en/stable/index.html">https://iminuit.readthedocs.io/en/stable/index.html</a>).</p>
 
 </div>
@@ -15529,7 +15556,9 @@ $$\sigma_{i} = \sqrt{C_{ii}}$$<p>where $i$ can stand for the POI $\mu$ or any of
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
 <p>While the tool uses numerical techniques by default, we can take advantage of the accelerated array-based computing capabilities of JAX.</p>
+<p><br></p>
 <p>In order to do the fitting optimization, iMinuit makes several (thousands in a full analysis) of repeated calls of the test statistic function until it finds the best fit value.</p>
+<p><br></p>
 <p>This is where we can take advantage of JIT compilation for an accelerated computation.</p>
 
 </div>
