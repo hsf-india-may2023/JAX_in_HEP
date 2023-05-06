@@ -12,6 +12,8 @@ Note that the Jupyter notebooks for lectures are designed to be converted to sli
 
 [Lecture 2: JIT Compilation and Likelihood Fit](https://hsf-india-may2023.github.io/JAX_in_HEP/Lecture_2_JIT_Tracing_Physics.slides.html)
 
+[Lecture 3: Using JAX Control Flow](https://hsf-india-may2023.github.io/JAX_in_HEP/Lecture_3_JAX_Control_Flow.slides.html)
+
 References:
 
 1. JAX repo: https://github.com/google/jax
